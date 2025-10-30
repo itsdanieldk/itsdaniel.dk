@@ -21,7 +21,6 @@ In the above example, two static pages will be generated, based on the existence
 - `https://example.com/projects/project-1`
 - `https://example.com/projects/project-2`
 
-
 All content must be preceded by required metadata in the markdown file in `yaml` format, and be enclosed by triple dashes. --- ---
 
 ```mdx
