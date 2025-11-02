@@ -1,15 +1,15 @@
 ---
 import "../styles/global.css";
-import p400 from "@fontsource/poppins/400.css";
-import p500 from "@fontsource/poppins/500.css";
-import p600 from "@fontsource/poppins/600.css";
-import p700 from "@fontsource/poppins/700.css";
-import p400i from "@fontsource/poppins/400-italic.css";
-import p500i from "@fontsource/poppins/500-italic.css";
-import p600i from "@fontsource/poppins/600-italic.css";
-import p700i from "@fontsource/poppins/700-italic.css";
-import fc from "@fontsource-variable/fira-code/index.css";
-import mm from "@fontsource/metamorphous/400.css";
+import "@fontsource/poppins/400.css";
+import "@fontsource/poppins/500.css";
+import "@fontsource/poppins/600.css";
+import "@fontsource/poppins/700.css";
+import "@fontsource/poppins/400-italic.css";
+import "@fontsource/poppins/500-italic.css";
+import "@fontsource/poppins/600-italic.css";
+import "@fontsource/poppins/700-italic.css";
+import "@fontsource-variable/fira-code/index.css";
+import "@fontsource/metamorphous/400.css";
 
 import { ClientRouter } from "astro:transitions";
 import { SITE } from "@consts";
@@ -22,29 +22,15 @@ interface Props {
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-// TODO: Figure out what this image does?
 const { title, description, image = "/astro-nano.png" } = Astro.props;
 ---
 
-<!-- Global Metadata -->
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <link rel="icon" type="image/svg+xml" href="/favicon-dark.svg" media="(prefers-color-scheme: dark)" />
 <link rel="icon" type="image/svg+xml" href="/favicon-light.svg" media="(prefers-color-scheme: light)" />
 <link rel="icon" type="image/x-icon" href="/favicon-light.svg" />
 <meta name="generator" content={Astro.generator} />
-
-<!-- Font preloads -->
-<link rel="preload" href={p400} as="font" type="font/woff2" crossorigin />
-<link rel="preload" href={p500} as="font" type="font/woff2" crossorigin />
-<link rel="preload" href={p600} as="font" type="font/woff2" crossorigin />
-<link rel="preload" href={p700} as="font" type="font/woff2" crossorigin />
-<link rel="preload" href={p400i} as="font" type="font/woff2" crossorigin />
-<link rel="preload" href={p500i} as="font" type="font/woff2" crossorigin />
-<link rel="preload" href={p600i} as="font" type="font/woff2" crossorigin />
-<link rel="preload" href={p700i} as="font" type="font/woff2" crossorigin />
-<link rel="preload" href={fc} as="font" type="font/woff2" crossorigin />
-<link rel="preload" href={mm} as="font" type="font/woff2" crossorigin />
 
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
