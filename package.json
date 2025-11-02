@@ -19,8 +19,9 @@
     "@astrojs/mdx": "4.3.9",
     "@astrojs/rss": "4.0.13",
     "@astrojs/sitemap": "3.6.0",
-    "@fontsource/inter": "^5.2.8",
-    "@fontsource/lora": "^5.2.8",
+    "@fontsource-variable/fira-code": "^5.2.7",
+    "@fontsource/metamorphous": "^5.2.8",
+    "@fontsource/poppins": "^5.2.7",
     "@tailwindcss/typography": "0.5.19",
     "@tailwindcss/vite": "^4.1.16",
     "astro": "5.15.3",
@@ -32,10 +33,10 @@
     "typescript": "^5.9.3"
   },
   "devDependencies": {
-    "@eslint/js": "^9.38.0",
+    "@eslint/js": "^9.39.0",
     "@typescript-eslint/eslint-plugin": "^8.46.2",
     "@typescript-eslint/parser": "^8.46.2",
-    "eslint": "^9.38.0",
+    "eslint": "^9.39.0",
     "eslint-plugin-astro": "^1.4.0",
     "prettier": "^3.6.2",
     "prettier-plugin-astro": "^0.14.1"

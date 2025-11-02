@@ -1,6 +1,13 @@
 # TODO
 
-1. Get a better font.
+1. write about page (need picture) (align with linkedin?)
+2. favicon (dark and light versions?)
+3. project: FIO
+4. note: Why Functional Programming Principles are Great
+5. remember to do a squash commit of everything after its ready to go live
+6. switch between dark and light code syntax (shiki)
+7. new favicons
+8. new icon for about page
 
 ## 🚀 Deploy your own
 
