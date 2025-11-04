@@ -8,6 +8,7 @@
 6. switch between dark and light code syntax (shiki)
 7. new favicons
 8. new icon for about page
+9. maybe the code in codeformatting is too large? It does not look too great on the small size of the blog.
 
 ## 🚀 Deploy your own
 

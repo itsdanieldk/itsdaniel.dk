@@ -4,6 +4,14 @@ description: "How FP makes code cleaner, safer, and easier to maintain."
 date: "Nov 02 2025"
 ---
 
+1. Functions are first-class citizens.
+2. Functions are deterministic.
+3. Functions do not create side effects.
+4. Data in functional programming is immutable.
+5. Functional programming is declarative.
+6. Functional programming uses function composition.
+7. Functional programming prefers recursion over loops.
+
 I first got into functional programming during a course at university using F#. Before long, I realized that functional programming isn’t just a different way to code; it’s a different way to think about problems. The more I used it, the more I appreciated how its principles lead to cleaner, safer, and more maintainable software.
 
 Functional programming emphasizes writing pure, composable functions and treating data as immutable. Let’s explore the core principles and why they make such a difference.
