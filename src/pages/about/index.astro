@@ -1,0 +1,56 @@
+---
+import PageLayout from "@layouts/PageLayout.astro";
+import Container from "@components/Container.astro";
+import Link from "@components/Link.astro";
+import { ABOUT, SITE, SOCIALS } from "@consts";
+---
+
+<PageLayout title={ABOUT.TITLE} description={ABOUT.DESCRIPTION}>
+  <Container>
+    <div class="space-y-8">
+      <div class="animate font-semibold text-black dark:text-white">About</div>
+      <article class="space-y-4">
+        <p class="animate">
+          Hi! I'm Daniel Larsen, a Software Engineer from Denmark passionate about building scalable and efficient systems. I specialize in
+          functional programming, distributed and parallel systems, software architecture, and cloud computing. While my favorite language
+          is F#, I primarily work with C#. I also have experience with Scala, SQL, JavaScript, and HTML/CSS.
+        </p>
+        <p class="animate">
+          I'm currently responsible for Backend Development at <Link href="https://clever.dk/" aria-label={`Clever`}>Clever</Link>, where I
+          build .NET solutions on the Azure cloud. My work focuses on designing and implementing scalable backend systems, leveraging
+          microservices architecture, serverless computing, and best practices in cloud-native development to deliver reliable and efficient
+          solutions.
+        </p>
+        <p class="animate">
+          I enjoy solving problems, learning new technologies, and sharing knowledge through technical blog posts, demo applications, social
+          media, and mentoring fellow developers.
+        </p>
+        <p class="animate">
+          Outside of programming, I enjoy staying active through running and weightlifting, exploring new metal-core and nu-metal bands,
+          playing guitar, and expanding my fragrance collection. I’m also passionate about reading Norse mythology and history.
+        </p>
+        <p class="animate">If you have any questions or inquiries, feel free to reach out to me.</p>
+      </article>
+
+      <img src="/itsdaniel.png" alt="Picture of Daniel Larsen" class="animate w-58 h-58 object-cover rounded-full mx-auto" />
+
+      <ul class="animate flex flex-wrap gap-2">
+        {
+          SOCIALS.map((SOCIAL) => (
+            <li class="flex gap-x-2 text-nowrap">
+              <Link href={SOCIAL.HREF} external aria-label={`${SITE.NAME} on ${SOCIAL.NAME}`}>
+                {SOCIAL.NAME}
+              </Link>
+              {"/"}
+            </li>
+          ))
+        }
+        <li class="line-clamp-1">
+          <Link href={`mailto:${SITE.EMAIL}`} aria-label={`Email ${SITE.NAME}`}>
+            {SITE.EMAIL}
+          </Link>
+        </li>
+      </ul>
+    </div>
+  </Container>
+</PageLayout>
