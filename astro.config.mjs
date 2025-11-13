@@ -11,7 +11,7 @@ export default defineConfig({
   },
   markdown: {
     shikiConfig: {
-      theme: "catppuccin-frappe",
+      theme: "catppuccin-macchiato",
       langs: [],
       wrap: true,
     },

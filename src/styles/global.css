@@ -90,3 +90,14 @@ html #back-to-top {
 html.scrolled #back-to-top {
   @apply opacity-100 pointer-events-auto;
 }
+
+blockquote {
+  quotes: none;
+  font-weight: normal;
+  opacity: 0.5;
+}
+
+blockquote::before,
+blockquote::after {
+  content: none;
+}
