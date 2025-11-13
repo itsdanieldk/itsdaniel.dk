@@ -101,3 +101,7 @@ blockquote::before,
 blockquote::after {
   content: none;
 }
+
+img:not([class*="rounded"]) {
+  border-radius: 6px;
+}
