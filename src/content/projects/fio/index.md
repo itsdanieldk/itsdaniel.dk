@@ -1,7 +1,7 @@
 ---
 title: "FIO"
 description: "A type-safe, purely functional effect system for F#."
-date: "Nov 02 2025"
+date: 2025-11-02
 repoURL: "https://github.com/fs-fio/fio"
 ---
 

@@ -1,7 +1,7 @@
 ---
 title: "Principles of Functional Programming"
 description: "The core functional principles and why they matter."
-date: "Nov 02 2025"
+date: 2025-11-02
 ---
 
 I first got into functional programming during a university course using F#. It didn't take long to realize that functional programming isn't just a different way to code, it's a different way to think about problems. The more I used it, the more I appreciated how its principles lead to cleaner, safer, and more maintainable software.
