@@ -1,11 +1,13 @@
 ---
 import type { CollectionEntry } from "astro:content";
+import { readingTime } from "@lib/utils";
 
 type Props = {
   entry: CollectionEntry<"notes"> | CollectionEntry<"projects">;
 };
 
 const { entry } = Astro.props;
+const showReadingTime = entry.collection === "notes";
 ---
 
 <a
@@ -19,10 +21,12 @@ const { entry } = Astro.props;
     <div class="text-base">
       {entry.data.description}
     </div>
+    {showReadingTime && <div class="text-sm text-black/40 dark:text-white/40 mt-1">{readingTime(entry.body)}</div>}
   </div>
   <svg
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24"
+    aria-hidden="true"
     class="absolute top-1/2 right-3 -translate-y-1/2 size-6 stroke-2 fill-none stroke-current"
   >
     <line
