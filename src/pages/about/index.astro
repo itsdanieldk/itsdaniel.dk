@@ -32,7 +32,14 @@ import { ABOUT, SITE, SOCIALS } from "@consts";
         <p class="animate">If you have any questions or inquiries, feel free to reach out to me.</p>
       </article>
 
-      <img src="/itsdaniel.png" alt="Picture of Daniel Larsen" class="animate w-58 h-58 object-cover rounded-full mx-auto" />
+      <img
+        src="/itsdaniel.png"
+        alt="Picture of Daniel Larsen"
+        loading="lazy"
+        width="232"
+        height="232"
+        class="animate w-58 h-58 object-cover rounded-full mx-auto"
+      />
 
       <ul class="animate flex flex-wrap gap-2">
         {
@@ -54,3 +61,26 @@ import { ABOUT, SITE, SOCIALS } from "@consts";
     </div>
   </Container>
 </PageLayout>
+
+<script
+  is:inline
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Person",
+    name: "Daniel Larsen",
+    url: "https://itsdaniel.dk",
+    image: "https://itsdaniel.dk/itsdaniel.png",
+    jobTitle: "Software Engineer",
+    worksFor: {
+      "@type": "Organization",
+      name: "Clever",
+    },
+    alumniOf: {
+      "@type": "CollegeOrUniversity",
+      name: "Technical University of Denmark",
+    },
+    knowsAbout: ["Functional Programming", "Distributed Systems", "Software Architecture", "Cloud Computing", "F#", "C#", ".NET", "Azure"],
+    sameAs: ["https://github.com/itsdanieldk", "https://www.linkedin.com/in/itsdanieldk/"],
+  })}
+/>
