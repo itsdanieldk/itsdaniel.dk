@@ -1,27 +1,12 @@
 ---
-import { type CollectionEntry, getCollection } from "astro:content";
 import PageLayout from "@layouts/PageLayout.astro";
 import Container from "@components/Container.astro";
 import ArrowCard from "@components/ArrowCard.astro";
 import { NOTES } from "@consts";
+import { getAllNotes, groupNotesByYear } from "@lib/collections";
 
-const data = (await getCollection("notes"))
-  .filter((post) => !post.data.draft)
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-
-type Acc = {
-  [year: string]: CollectionEntry<"notes">[];
-};
-
-const notes = data.reduce((acc: Acc, note) => {
-  const year = note.data.date.getFullYear().toString();
-  if (!acc[year]) {
-    acc[year] = [];
-  }
-  acc[year].push(note);
-  return acc;
-}, {});
-
+const data = await getAllNotes();
+const notes = groupNotesByYear(data);
 const years = Object.keys(notes).sort((a, b) => parseInt(b) - parseInt(a));
 ---
 

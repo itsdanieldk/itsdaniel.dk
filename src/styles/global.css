@@ -83,6 +83,24 @@ article a:hover {
   @apply opacity-100 translate-y-0;
 }
 
+/* Respect user's motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate {
+    @apply transition-none;
+    animation: none !important;
+  }
+
+  .animate.show {
+    @apply opacity-100 translate-y-0;
+  }
+
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 html #back-to-top {
   @apply opacity-0 pointer-events-none;
 }

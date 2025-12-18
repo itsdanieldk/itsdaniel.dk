@@ -110,11 +110,11 @@ const { title, description, image = "/itsdaniel.png" } = Astro.props;
 
   function animate() {
     const animateElements = document.querySelectorAll(".animate");
-
+    const delay = 100;
     animateElements.forEach((element, index) => {
       setTimeout(() => {
         element.classList.add("show");
-      }, index * 150);
+      }, index * delay);
     });
   }
 

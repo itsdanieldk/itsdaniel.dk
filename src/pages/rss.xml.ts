@@ -1,17 +1,16 @@
 import rss from "@astrojs/rss";
-import { getCollection } from "astro:content";
 import { HOME } from "@consts";
+import { getAllNotes, getAllProjects } from "@lib/collections";
 
 type Context = {
   site: string;
 };
 
 export async function GET(context: Context) {
-  const notes = (await getCollection("notes")).filter((note) => !note.data.draft);
+  const notes = await getAllNotes();
+  const projects = await getAllProjects();
 
-  const projects = (await getCollection("projects")).filter((project) => !project.data.draft);
-
-  const items = [...notes, ...projects].sort((a, b) => new Date(b.data.date).valueOf() - new Date(a.data.date).valueOf());
+  const items = [...notes, ...projects].sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
   return rss({
     title: HOME.TITLE,
