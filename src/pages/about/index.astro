@@ -11,35 +11,36 @@ import { ABOUT, SITE, SOCIALS } from "@consts";
       <div class="animate font-semibold text-black dark:text-white">About</div>
       <article class="space-y-4">
         <p class="animate">
-          Hi! I'm Daniel Larsen, a Software Engineer from Denmark passionate about building scalable and efficient systems. I specialize in
-          functional programming, distributed and parallel systems, software architecture, and cloud computing. While my favorite language
-          is F#, I primarily work with C#. I also have experience with Scala, SQL, JavaScript, and HTML/CSS.
+          Hi! I'm Daniel Larsen, a Software Engineer from Denmark. I specialize in functional programming, distributed and parallel systems,
+          software architecture, and cloud computing. While F# is my favorite language, I primarily work with C# and also have experience
+          with Scala, SQL, TypeScript, and HTML/CSS.
         </p>
         <p class="animate">
           I'm currently responsible for Backend Development at <Link href="https://clever.dk/" aria-label={`Clever`}>Clever</Link>, where I
-          build .NET solutions on the Azure cloud. My work focuses on designing and implementing scalable backend systems, leveraging
-          microservices architecture, serverless computing, and best practices in cloud-native development to deliver reliable and efficient
-          solutions.
+          build .NET solutions on Azure. My work focuses on scalable backend systems using microservices, serverless computing, and
+          cloud-native development practices. I enjoy solving problems, learning new technologies, and sharing knowledge through notes,
+          demos, and mentoring.
         </p>
         <p class="animate">
-          I enjoy solving problems, learning new technologies, and sharing knowledge through technical blog posts, demo applications, social
-          media, and mentoring fellow developers.
+          Outside programming, I stay active through running and weightlifting, explore new metal genres and bands, practice guitar, expand
+          my fragrance collection, and read Norse mythology and history.
         </p>
-        <p class="animate">
-          Outside of programming, I enjoy staying active through running and weightlifting, exploring new metal-core and nu-metal bands,
-          playing guitar, and expanding my fragrance collection. I’m also passionate about reading Norse mythology and history.
-        </p>
-        <p class="animate">If you have any questions or inquiries, feel free to reach out to me.</p>
+        <p class="animate">Questions or want to connect? Reach out anytime.</p>
       </article>
 
-      <img
-        src="/itsdaniel.png"
-        alt="Picture of Daniel Larsen"
-        loading="lazy"
-        width="232"
-        height="232"
-        class="animate w-58 h-58 object-cover rounded-full mx-auto"
-      />
+      <picture class="animate block mx-auto w-58 h-58">
+        <source type="image/webp" srcset="/itsdaniel-400.webp 400w, /itsdaniel-600.webp 600w, /itsdaniel-800.webp 800w" sizes="232px" />
+        <img
+          src="/itsdaniel.png"
+          srcset="/itsdaniel-400.png 400w, /itsdaniel-600.png 600w, /itsdaniel-800.png 800w"
+          sizes="232px"
+          alt="Picture of Daniel Larsen"
+          loading="lazy"
+          width="232"
+          height="232"
+          class="w-58 h-58 object-cover rounded-full"
+        />
+      </picture>
 
       <ul class="animate flex flex-wrap gap-2">
         {

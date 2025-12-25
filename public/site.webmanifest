@@ -4,16 +4,10 @@
   "description": "Daniel Larsen's personal website about software engineering, functional programming, and distributed systems",
   "icons": [
     {
-      "src": "/favicon/android-chrome-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "/favicon/android-chrome-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any maskable"
+      "src": "/favicon/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ],
   "theme_color": "#f5f5f4",
