@@ -28,7 +28,6 @@
     "astro": "5.16.6",
     "clsx": "^2.1.1",
     "eslint-plugin-jsx-a11y": "^6.10.2",
-    "sharp": "^0.34.5",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3",
