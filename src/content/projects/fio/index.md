@@ -7,35 +7,36 @@ repoURL: "https://github.com/fs-fio/fio"
 
 ![FIO](/projects/fio.png)
 
-**FIO** is a type-safe, purely functional effect system for F#, designed for building **highly concurrent** and **asynchronous** applications. It provides a lightweight [**DSL**](https://martinfowler.com/dsl.html) for writing composable programs using functional effects.
+**FIO** is a type-safe, purely functional effect system for F#. Write highly concurrent applications using a composable DSL inspired by [**ZIO**](https://zio.dev/) and [**Cats Effect**](https://typelevel.org/cats-effect/).
 
-Inspired by [**ZIO**](https://zio.dev/) and [**Cats Effect**](https://typelevel.org/cats-effect/), **FIO** features:
+**Key features:**
 
-- An **IO monad** for managing side effects
-- **Fibers** (green threads) for scalable concurrency
-- A focus on **purity**, **type safety**, and **performance**
+- **IO monad** for pure side effect management
+- **Fibers** (green threads) with constant-time scheduling
+- **Multiple runtimes**: Direct, Cooperative, and Concurrent
+- Performance-validated with comprehensive benchmarks
 
-**FIO** was developed as part of a master's thesis in Computer Science at [**DTU**](https://www.dtu.dk/english).
+Initially developed at [**DTU**](https://www.dtu.dk/english) and available on [**NuGet**](https://www.nuget.org/packages/FSharp.FIO).
 
-Compose functional effects with **FIO**:
+**Example:**
 
 ```fsharp
-module FIOAppUsage
+module MyFIOProject
 
 open FSharp.FIO.DSL
-open FSharp.FIO.Lib.IO
 open FSharp.FIO.App
+open FSharp.FIO.Lib.IO
 
 type WelcomeApp() =
     inherit FIOApp<unit, exn> ()
 
     override _.effect = fio {
         do! FConsole.PrintLine "Hello! What is your name?"
-        let! name = FConsole.ReadLine ()
+        let! name = FConsole.ReadLine
         do! FConsole.PrintLine $"Hello, %s{name}! Welcome to FIO! 🪻💜"
     }
 
 WelcomeApp().Run()
 ```
 
-Check out the [**repository**](https://github.com/fs-fio/fio) for more information.
+Explore the full API, benchmarks, and documentation in the [**repository**](https://github.com/fs-fio/fio).

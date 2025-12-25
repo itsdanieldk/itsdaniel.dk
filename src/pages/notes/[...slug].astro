@@ -45,3 +45,30 @@ const { Content } = await note.render();
     </article>
   </Container>
 </PageLayout>
+
+<script
+  is:inline
+  type="application/ld+json"
+  set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: note.data.title,
+    description: note.data.description,
+    datePublished: note.data.date.toISOString(),
+    dateModified: note.data.date.toISOString(),
+    author: {
+      "@type": "Person",
+      name: "Daniel Larsen",
+      url: "https://itsdaniel.dk",
+    },
+    publisher: {
+      "@type": "Person",
+      name: "Daniel Larsen",
+      url: "https://itsdaniel.dk",
+    },
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": `https://itsdaniel.dk/notes/${note.slug}/`,
+    },
+  })}
+/>

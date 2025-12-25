@@ -8,7 +8,7 @@ import "@fontsource/poppins/400-italic.css";
 import "@fontsource/poppins/500-italic.css";
 import "@fontsource/poppins/600-italic.css";
 import "@fontsource/poppins/700-italic.css";
-import "@fontsource-variable/fira-code/index.css";
+import "@fontsource-variable/cascadia-code";
 import "@fontsource/metamorphous/400.css";
 
 import { ClientRouter } from "astro:transitions";
@@ -27,11 +27,8 @@ const { title, description, image = "/itsdaniel.png" } = Astro.props;
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<link rel="icon" type="image/x-icon" href="/favicon/favicon.ico" />
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
-<link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
-<link rel="apple-touch-icon-precomposed" href="/favicon/apple-touch-precomposed.png" />
+<link rel="icon" type="image/svg+xml" href="/favicon/favicon.svg" />
+<link rel="apple-touch-icon" href="/favicon/favicon.svg" />
 <link rel="manifest" href="/site.webmanifest" />
 <meta name="generator" content={Astro.generator} />
 
@@ -42,6 +39,7 @@ const { title, description, image = "/itsdaniel.png" } = Astro.props;
 <title>{title}</title>
 <meta name="title" content={title} />
 <meta name="description" content={description} />
+<meta name="author" content="Daniel Larsen" />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
@@ -70,42 +68,89 @@ const { title, description, image = "/itsdaniel.png" } = Astro.props;
 </script>
 
 <script is:inline>
+  let abortController = null;
+
   function init() {
+    if (abortController) {
+      abortController.abort();
+    }
+
+    abortController = new AbortController();
+    const signal = abortController.signal;
+
     preloadTheme();
     onScroll();
     animate();
 
     const backToTop = document.getElementById("back-to-top");
-    backToTop?.addEventListener("click", (event) => scrollToTop(event));
+    backToTop?.addEventListener("click", (event) => scrollToTop(event), { signal });
 
     const backToPrev = document.getElementById("back-to-prev");
-    backToPrev?.addEventListener("click", () => window.history.back());
+    backToPrev?.addEventListener("click", () => window.history.back(), { signal });
 
     const lightThemeButton = document.getElementById("light-theme-button");
-    lightThemeButton?.addEventListener("click", () => {
-      localStorage.setItem("theme", "light");
-      toggleTheme(false);
-    });
+    lightThemeButton?.addEventListener(
+      "click",
+      () => {
+        try {
+          localStorage.setItem("theme", "light");
+        } catch (e) {
+          console.warn("localStorage not available:", e);
+        }
+        toggleTheme(false);
+        updateThemeButtonStates();
+      },
+      { signal }
+    );
 
     const darkThemeButton = document.getElementById("dark-theme-button");
-    darkThemeButton?.addEventListener("click", () => {
-      localStorage.setItem("theme", "dark");
-      toggleTheme(true);
-    });
+    darkThemeButton?.addEventListener(
+      "click",
+      () => {
+        try {
+          localStorage.setItem("theme", "dark");
+        } catch (e) {
+          console.warn("localStorage not available:", e);
+        }
+        toggleTheme(true);
+        updateThemeButtonStates();
+      },
+      { signal }
+    );
 
     const systemThemeButton = document.getElementById("system-theme-button");
-    systemThemeButton?.addEventListener("click", () => {
-      localStorage.setItem("theme", "system");
-      toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
-    });
+    systemThemeButton?.addEventListener(
+      "click",
+      () => {
+        try {
+          localStorage.setItem("theme", "system");
+        } catch (e) {
+          console.warn("localStorage not available:", e);
+        }
+        toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
+        updateThemeButtonStates();
+      },
+      { signal }
+    );
 
-    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
-      if (localStorage.theme === "system" || !localStorage.theme) {
-        toggleTheme(event.matches);
-      }
-    });
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener(
+      "change",
+      (event) => {
+        let userTheme;
+        try {
+          userTheme = localStorage.theme;
+        } catch (e) {
+          userTheme = null;
+        }
 
-    document.addEventListener("scroll", onScroll);
+        if (userTheme === "system" || !userTheme) {
+          toggleTheme(event.matches);
+        }
+      },
+      { signal }
+    );
+
+    document.addEventListener("scroll", onScroll, { signal });
   }
 
   function animate() {
@@ -158,19 +203,51 @@ const { title, description, image = "/itsdaniel.png" } = Astro.props;
       document.documentElement.classList.remove("dark");
     }
 
-    // Force computation of styles
     void window.getComputedStyle(css).opacity;
     document.head.removeChild(css);
   }
 
+  function updateThemeButtonStates() {
+    let userTheme;
+    try {
+      userTheme = localStorage.theme;
+    } catch (e) {
+      userTheme = null;
+    }
+
+    const lightButton = document.getElementById("light-theme-button");
+    const darkButton = document.getElementById("dark-theme-button");
+    const systemButton = document.getElementById("system-theme-button");
+
+    lightButton?.setAttribute("aria-pressed", "false");
+    darkButton?.setAttribute("aria-pressed", "false");
+    systemButton?.setAttribute("aria-pressed", "false");
+
+    if (userTheme === "light") {
+      lightButton?.setAttribute("aria-pressed", "true");
+    } else if (userTheme === "dark") {
+      darkButton?.setAttribute("aria-pressed", "true");
+    } else {
+      systemButton?.setAttribute("aria-pressed", "true");
+    }
+  }
+
   function preloadTheme() {
-    const userTheme = localStorage.theme;
+    let userTheme;
+    try {
+      userTheme = localStorage.theme;
+    } catch (e) {
+      console.warn("localStorage not available, using system preference");
+      userTheme = null;
+    }
 
     if (userTheme === "light" || userTheme === "dark") {
       toggleTheme(userTheme === "dark");
     } else {
       toggleTheme(window.matchMedia("(prefers-color-scheme: dark)").matches);
     }
+
+    updateThemeButtonStates();
   }
 
   document.addEventListener("DOMContentLoaded", () => init());
