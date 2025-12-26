@@ -19,15 +19,15 @@ importers:
       "@astrojs/sitemap":
         specifier: 3.6.0
         version: 3.6.0
-      "@fontsource-variable/cascadia-code":
-        specifier: ^5.2.2
-        version: 5.2.2
+      "@fontsource-variable/fira-code":
+        specifier: ^5.2.7
+        version: 5.2.7
+      "@fontsource/fira-sans":
+        specifier: ^5.2.7
+        version: 5.2.7
       "@fontsource/metamorphous":
         specifier: ^5.2.8
         version: 5.2.8
-      "@fontsource/poppins":
-        specifier: ^5.2.7
-        version: 5.2.7
       "@tailwindcss/typography":
         specifier: 0.5.19
         version: 0.5.19(tailwindcss@4.1.18)
@@ -549,14 +549,14 @@ packages:
     resolution: { integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA== }
     engines: { node: ">=14" }
 
-  "@fontsource-variable/cascadia-code@5.2.2":
-    resolution: { integrity: sha512-5Sn7CySADZaPggdZ9wXnC0CKdLfca+7G7ipaSWSOXFQvAxnH+zKnflktVAVj5A3loP8ZAs72w7+v/RCwOnPpaQ== }
+  "@fontsource-variable/fira-code@5.2.7":
+    resolution: { integrity: sha512-J2bxN7fz5rd8WpQYyau4o19WqTzxoTqaNj9jhsv4p21GSu1Rf34tbqsxqjyDCR+wDMHM3SajyFqtq+5uvRUQ7w== }
+
+  "@fontsource/fira-sans@5.2.7":
+    resolution: { integrity: sha512-5DE4AealD/VnbwdzMgnpWfCttMQBbteNiK9DCJE7cVwZEbDTPLUoFDMMvxNQ498nZc5in7Mta9c/s+3Ehh0BAg== }
 
   "@fontsource/metamorphous@5.2.8":
     resolution: { integrity: sha512-5Xu68jzxWuazo6P8uQgNl0Sr5i2FcbuPXReOGg6M6EfFFw/WbMOgRH50eb9N3VLd1UGxZSzMfCdXizNCDnc2qQ== }
-
-  "@fontsource/poppins@5.2.7":
-    resolution: { integrity: sha512-6uQyPmseo4FgI97WIhA4yWRlNaoLk4vSDK/PyRwdqqZb5zAEuc+Kunt8JTMcsHYUEGYBtN15SNkMajMdqUSUmg== }
 
   "@humanfs/core@0.19.1":
     resolution: { integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA== }
@@ -4661,11 +4661,11 @@ snapshots:
 
   "@fastify/busboy@2.1.1": {}
 
-  "@fontsource-variable/cascadia-code@5.2.2": {}
+  "@fontsource-variable/fira-code@5.2.7": {}
+
+  "@fontsource/fira-sans@5.2.7": {}
 
   "@fontsource/metamorphous@5.2.8": {}
-
-  "@fontsource/poppins@5.2.7": {}
 
   "@humanfs/core@0.19.1": {}
 

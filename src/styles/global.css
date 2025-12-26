@@ -3,8 +3,8 @@
 
 @theme {
   --font-sans:
-    "Poppins", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
-  --font-mono: "Cascadia Code Variable", monospace;
+    "Fira Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: "Fira Code Variable", monospace;
   --font-title: "Metamorphous", serif;
 }
 
