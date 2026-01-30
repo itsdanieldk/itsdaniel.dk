@@ -23,3 +23,6 @@ pnpm-debug.log*
 # claude
 .claude
 CLAUDE.md
+
+# codex
+AGENTS.md

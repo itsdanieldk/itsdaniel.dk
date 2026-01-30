@@ -50,7 +50,7 @@ const projects = (await getAllProjects()).slice(0, SITE.NUM_PROJECTS_ON_HOMEPAGE
       <section class="animate space-y-6">
         <div class="flex flex-wrap gap-y-2 items-center justify-between">
           <h2 class="font-semibold text-black dark:text-white">Latest notes</h2>
-          <Link href="/notes"> See all notes </Link>
+          <Link href="/notes/"> See all notes </Link>
         </div>
         <ul class="flex flex-col gap-4">
           {
@@ -66,7 +66,7 @@ const projects = (await getAllProjects()).slice(0, SITE.NUM_PROJECTS_ON_HOMEPAGE
       <section class="animate space-y-6">
         <div class="flex flex-wrap gap-y-2 items-center justify-between">
           <h2 class="font-semibold text-black dark:text-white">Recent projects</h2>
-          <Link href="/projects"> See all projects </Link>
+          <Link href="/projects/"> See all projects </Link>
         </div>
         <ul class="flex flex-col gap-4">
           {
@@ -89,12 +89,12 @@ const projects = (await getAllProjects()).slice(0, SITE.NUM_PROJECTS_ON_HOMEPAGE
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: SITE.NAME,
-    url: "https://itsdaniel.dk",
+    url: "https://itsdaniel.dk/",
     description: HOME.DESCRIPTION,
     author: {
       "@type": "Person",
       name: "Daniel Larsen",
-      url: "https://itsdaniel.dk/about",
+      url: "https://itsdaniel.dk/about/",
       sameAs: SOCIALS.map((social) => social.HREF),
     },
     inLanguage: "en-US",

@@ -1,7 +1,7 @@
 ---
 import PageLayout from "@layouts/PageLayout.astro";
 import Container from "@components/Container.astro";
-import Link from "@components/Link.astro";
+import TextButton from "@components/TextButton.astro";
 ---
 
 <PageLayout title="Page Not Found" description="The page you're looking for doesn't exist.">
@@ -14,20 +14,8 @@ import Link from "@components/Link.astro";
       </div>
 
       <div class="animate flex flex-col sm:flex-row gap-4 justify-center">
-        <Link href="/" underline={false}>
-          <button
-            class="px-6 py-3 rounded-lg border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"
-          >
-            Go to home
-          </button>
-        </Link>
-        <Link href="/notes" underline={false}>
-          <button
-            class="px-6 py-3 rounded-lg border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"
-          >
-            Browse notes
-          </button>
-        </Link>
+        <TextButton href="/">Go to home</TextButton>
+        <TextButton href="/notes/">Browse notes</TextButton>
       </div>
     </div>
   </Container>

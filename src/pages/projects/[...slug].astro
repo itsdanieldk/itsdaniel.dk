@@ -25,7 +25,7 @@ const { Content } = await project.render();
 <PageLayout title={project.data.title} description={project.data.description}>
   <Container>
     <div class="animate">
-      <BackToPrev href="/projects"> Back to projects </BackToPrev>
+      <BackToPrev href="/projects/"> Back to projects </BackToPrev>
     </div>
     <div class="space-y-1 my-10">
       <div class="animate flex items-center gap-1.5">
@@ -76,7 +76,7 @@ const { Content } = await project.render();
     author: {
       "@type": "Person",
       name: "Daniel Larsen",
-      url: "https://itsdaniel.dk",
+      url: "https://itsdaniel.dk/",
     },
     ...(project.data.demoURL && { url: project.data.demoURL }),
     ...(project.data.repoURL && { codeRepository: project.data.repoURL }),

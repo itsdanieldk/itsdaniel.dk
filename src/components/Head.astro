@@ -75,6 +75,41 @@ const { title, description, image = "/itsdaniel.png" } = Astro.props;
 
 <script is:inline>
   let abortController = null;
+  const NAV_PATH_KEY = "nav.currentPath";
+  const NAV_INTERNAL_KEY = "nav.hasInternalNav";
+
+  function resetNavTrackingIfExternal() {
+    try {
+      if (!document.referrer || new URL(document.referrer).origin !== window.location.origin) {
+        sessionStorage.removeItem(NAV_PATH_KEY);
+        sessionStorage.removeItem(NAV_INTERNAL_KEY);
+      }
+    } catch (e) {
+      console.warn("sessionStorage not available:", e);
+    }
+  }
+
+  function recordNavPath() {
+    try {
+      const currentPath = sessionStorage.getItem(NAV_PATH_KEY);
+      if (currentPath && currentPath !== window.location.pathname) {
+        sessionStorage.setItem(NAV_INTERNAL_KEY, "true");
+      }
+      sessionStorage.setItem(NAV_PATH_KEY, window.location.pathname);
+    } catch (e) {
+      console.warn("sessionStorage not available:", e);
+    }
+  }
+
+  function hasInternalNavigation() {
+    try {
+      return sessionStorage.getItem(NAV_INTERNAL_KEY) === "true";
+    } catch (e) {
+      return false;
+    }
+  }
+
+  resetNavTrackingIfExternal();
 
   function init() {
     if (abortController) {
@@ -84,7 +119,8 @@ const { title, description, image = "/itsdaniel.png" } = Astro.props;
     abortController = new AbortController();
     const signal = abortController.signal;
 
-    preloadTheme();
+    recordNavPath();
+
     onScroll();
     animate();
 
@@ -92,7 +128,19 @@ const { title, description, image = "/itsdaniel.png" } = Astro.props;
     backToTop?.addEventListener("click", (event) => scrollToTop(event), { signal });
 
     const backToPrev = document.getElementById("back-to-prev");
-    backToPrev?.addEventListener("click", () => window.history.back(), { signal });
+    backToPrev?.addEventListener(
+      "click",
+      (event) => {
+        if (!(event instanceof MouseEvent)) return;
+        if (event.defaultPrevented) return;
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey || event.button !== 0) return;
+        if (!hasInternalNavigation()) return;
+        if (window.history.length <= 1) return;
+        event.preventDefault();
+        window.history.back();
+      },
+      { signal }
+    );
 
     const lightThemeButton = document.getElementById("light-theme-button");
     lightThemeButton?.addEventListener(
@@ -157,6 +205,7 @@ const { title, description, image = "/itsdaniel.png" } = Astro.props;
     );
 
     document.addEventListener("scroll", onScroll, { signal });
+    updateThemeButtonStates();
   }
 
   function animate() {
