@@ -1,28 +1,32 @@
 ---
-import { type CollectionEntry, getCollection } from "astro:content";
+import { type CollectionEntry, render } from "astro:content";
 import PageLayout from "@layouts/PageLayout.astro";
 import Container from "@components/Container.astro";
 import FormattedDate from "@components/FormattedDate.astro";
+import TableOfContents from "@components/TableOfContents.astro";
+import CopyLinkButton from "@components/CopyLinkButton.astro";
+import PostNavigation from "@components/PostNavigation.astro";
+import Tag from "@components/Tag.astro";
 import { readingTime } from "@lib/utils";
 import BackToPrev from "@components/BackToPrev.astro";
 import Link from "@components/Link.astro";
+import { getAllProjects } from "@lib/collections";
 
 export async function getStaticPaths() {
-  const projects = (await getCollection("projects"))
-    .filter((post) => !post.data.draft)
-    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-  return projects.map((project) => ({
-    params: { slug: project.slug },
-    props: project,
+  const projects = await getAllProjects();
+  return projects.map((project, index) => ({
+    params: { slug: project.id },
+    props: { entry: project, prev: projects[index + 1], next: projects[index - 1] },
   }));
 }
-type Props = CollectionEntry<"projects">;
+type Props = { entry: CollectionEntry<"projects">; prev?: CollectionEntry<"projects">; next?: CollectionEntry<"projects"> };
 
-const project = Astro.props;
-const { Content } = await project.render();
+const { entry: project, prev, next } = Astro.props;
+const { Content, headings } = await render(project);
+const siteUrl = Astro.site?.toString() ?? "";
 ---
 
-<PageLayout title={project.data.title} description={project.data.description}>
+<PageLayout title={project.data.title} description={project.data.description} ogType="article">
   <Container>
     <div class="animate">
       <BackToPrev href="/projects/"> Back to projects </BackToPrev>
@@ -34,12 +38,34 @@ const { Content } = await project.render();
         </div>
         &bull;
         <div class="font-base text-sm">
-          {readingTime(project.body)}
+          {readingTime(project.body ?? "")}
         </div>
+        {
+          project.data.updatedDate && project.data.updatedDate.getTime() !== project.data.date.getTime() && (
+            <>
+              &bull;
+              <div class="font-base text-sm">
+                Updated: <FormattedDate date={project.data.updatedDate} />
+              </div>
+            </>
+          )
+        }
       </div>
-      <div class="animate text-2xl font-semibold text-black dark:text-white">
-        {project.data.title}
+      <div class="animate flex items-center gap-2">
+        <h1 class="text-2xl font-semibold text-black dark:text-white">
+          {project.data.title}
+        </h1>
+        <CopyLinkButton />
       </div>
+      {
+        project.data.tags && project.data.tags.length > 0 && (
+          <div class="animate flex flex-wrap gap-1.5">
+            {project.data.tags.map((tag) => (
+              <Tag tag={tag} href={`/tags/${encodeURIComponent(tag)}/`} />
+            ))}
+          </div>
+        )
+      }
       {
         (project.data.demoURL || project.data.repoURL) && (
           <nav class="animate flex gap-1">
@@ -58,9 +84,11 @@ const { Content } = await project.render();
         )
       }
     </div>
+    <TableOfContents headings={headings} />
     <article class="animate">
       <Content />
     </article>
+    <PostNavigation prev={prev} next={next} />
   </Container>
 </PageLayout>
 
@@ -73,10 +101,11 @@ const { Content } = await project.render();
     name: project.data.title,
     description: project.data.description,
     datePublished: project.data.date.toISOString(),
+    dateModified: (project.data.updatedDate ?? project.data.date).toISOString(),
     author: {
       "@type": "Person",
       name: "Daniel Larsen",
-      url: "https://itsdaniel.dk/",
+      url: siteUrl,
     },
     ...(project.data.demoURL && { url: project.data.demoURL }),
     ...(project.data.repoURL && { codeRepository: project.data.repoURL }),

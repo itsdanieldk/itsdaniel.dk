@@ -25,7 +25,7 @@ pnpm dev
 pnpm build
 ```
 
-**Requirements**: Node.js 18+, pnpm 9+
+**Requirements**: Node.js 22.12.0+, pnpm 9+
 
 ## Project Structure
 

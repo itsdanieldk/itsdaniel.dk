@@ -9,22 +9,22 @@ export const SITE: Site = {
 
 export const HOME: Metadata = {
   TITLE: "Home",
-  DESCRIPTION: "Daniel Larsen's personal website about software engineering.",
+  DESCRIPTION: "Software engineer writing about functional programming, distributed systems, and .NET. By Daniel Larsen.",
 };
 
 export const NOTES: Metadata = {
   TITLE: "Notes",
-  DESCRIPTION: "A collection of notes on topics I am passionate about.",
+  DESCRIPTION: "Notes on functional programming, software architecture, and lessons from building backend systems.",
 };
 
 export const PROJECTS: Metadata = {
   TITLE: "Projects",
-  DESCRIPTION: "A collection of my projects, with links to repositories and demos.",
+  DESCRIPTION: "Open source projects and experiments in F#, .NET, and distributed systems.",
 };
 
 export const ABOUT: Metadata = {
   TITLE: "About",
-  DESCRIPTION: "Learn more about me and my journey.",
+  DESCRIPTION: "About Daniel Larsen, a software engineer from Denmark specializing in functional programming and cloud-native .NET systems.",
 };
 
 export const SOCIALS: Socials = [

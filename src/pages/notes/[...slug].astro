@@ -1,27 +1,31 @@
 ---
-import { type CollectionEntry, getCollection } from "astro:content";
+import { type CollectionEntry, render } from "astro:content";
 import PageLayout from "@layouts/PageLayout.astro";
 import Container from "@components/Container.astro";
 import FormattedDate from "@components/FormattedDate.astro";
+import TableOfContents from "@components/TableOfContents.astro";
+import CopyLinkButton from "@components/CopyLinkButton.astro";
+import PostNavigation from "@components/PostNavigation.astro";
+import Tag from "@components/Tag.astro";
 import { readingTime } from "@lib/utils";
 import BackToPrev from "@components/BackToPrev.astro";
+import { getAllNotes } from "@lib/collections";
 
 export async function getStaticPaths() {
-  const notes = (await getCollection("notes"))
-    .filter((note) => !note.data.draft)
-    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
-  return notes.map((note) => ({
-    params: { slug: note.slug },
-    props: note,
+  const notes = await getAllNotes();
+  return notes.map((note, index) => ({
+    params: { slug: note.id },
+    props: { entry: note, prev: notes[index + 1], next: notes[index - 1] },
   }));
 }
-type Props = CollectionEntry<"notes">;
+type Props = { entry: CollectionEntry<"notes">; prev?: CollectionEntry<"notes">; next?: CollectionEntry<"notes"> };
 
-const note = Astro.props;
-const { Content } = await note.render();
+const { entry: note, prev, next } = Astro.props;
+const { Content, headings } = await render(note);
+const siteUrl = Astro.site?.toString() ?? "";
 ---
 
-<PageLayout title={note.data.title} description={note.data.description}>
+<PageLayout title={note.data.title} description={note.data.description} ogType="article">
   <Container>
     <div class="animate">
       <BackToPrev href="/notes/"> Back to notes </BackToPrev>
@@ -33,16 +37,40 @@ const { Content } = await note.render();
         </div>
         &bull;
         <div class="font-base text-sm">
-          {readingTime(note.body)}
+          {readingTime(note.body ?? "")}
         </div>
+        {
+          note.data.updatedDate && note.data.updatedDate.getTime() !== note.data.date.getTime() && (
+            <>
+              &bull;
+              <div class="font-base text-sm">
+                Updated: <FormattedDate date={note.data.updatedDate} />
+              </div>
+            </>
+          )
+        }
       </div>
-      <div class="animate text-2xl font-semibold text-black dark:text-white">
-        {note.data.title}
+      <div class="animate flex items-center gap-2">
+        <h1 class="text-2xl font-semibold text-black dark:text-white">
+          {note.data.title}
+        </h1>
+        <CopyLinkButton />
       </div>
+      {
+        note.data.tags && note.data.tags.length > 0 && (
+          <div class="animate flex flex-wrap gap-1.5">
+            {note.data.tags.map((tag) => (
+              <Tag tag={tag} href={`/tags/${encodeURIComponent(tag)}/`} />
+            ))}
+          </div>
+        )
+      }
     </div>
+    <TableOfContents headings={headings} />
     <article class="animate">
       <Content />
     </article>
+    <PostNavigation prev={prev} next={next} />
   </Container>
 </PageLayout>
 
@@ -55,20 +83,20 @@ const { Content } = await note.render();
     headline: note.data.title,
     description: note.data.description,
     datePublished: note.data.date.toISOString(),
-    dateModified: note.data.date.toISOString(),
+    dateModified: (note.data.updatedDate ?? note.data.date).toISOString(),
     author: {
       "@type": "Person",
       name: "Daniel Larsen",
-      url: "https://itsdaniel.dk/",
+      url: siteUrl,
     },
     publisher: {
       "@type": "Person",
       name: "Daniel Larsen",
-      url: "https://itsdaniel.dk/",
+      url: siteUrl,
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://itsdaniel.dk/notes/${note.slug}/`,
+      "@id": `${siteUrl}notes/${note.id}/`,
     },
   })}
 />

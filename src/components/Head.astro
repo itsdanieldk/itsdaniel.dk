@@ -4,14 +4,7 @@ import "@fontsource/fira-sans/400.css";
 import "@fontsource/fira-sans/500.css";
 import "@fontsource/fira-sans/600.css";
 import "@fontsource/fira-sans/700.css";
-import "@fontsource/fira-sans/800.css";
-import "@fontsource/fira-sans/900.css";
 import "@fontsource/fira-sans/400-italic.css";
-import "@fontsource/fira-sans/500-italic.css";
-import "@fontsource/fira-sans/600-italic.css";
-import "@fontsource/fira-sans/700-italic.css";
-import "@fontsource/fira-sans/800-italic.css";
-import "@fontsource/fira-sans/900-italic.css";
 import "@fontsource-variable/fira-code";
 import "@fontsource/metamorphous/400.css";
 
@@ -22,11 +15,12 @@ interface Props {
   title: string;
   description: string;
   image?: string;
+  ogType?: string;
 }
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
-const { title, description, image = "/itsdaniel.png" } = Astro.props;
+const { title, description, image = "/itsdaniel.png", ogType = "website" } = Astro.props;
 ---
 
 <meta charset="utf-8" />
@@ -48,7 +42,8 @@ const { title, description, image = "/itsdaniel.png" } = Astro.props;
 <meta name="author" content="Daniel Larsen" />
 
 <!-- Open Graph / Facebook -->
-<meta property="og:type" content="website" />
+<meta property="og:type" content={ogType} />
+<meta property="og:locale" content="en_US" />
 <meta property="og:url" content={Astro.url} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
@@ -66,14 +61,97 @@ const { title, description, image = "/itsdaniel.png" } = Astro.props;
 <!-- RSS Link -->
 <link rel="alternate" type="application/rss+xml" title={SITE.NAME} href={new URL("rss.xml", Astro.site)} />
 
+<!-- Theme Color -->
+<meta name="theme-color" content="#f5f5f4" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#1c1917" media="(prefers-color-scheme: dark)" />
+
 <script>
   import type { TransitionBeforeSwapEvent } from "astro:transitions/client";
-  document.addEventListener("astro:before-swap", (e) =>
-    [...(e as TransitionBeforeSwapEvent).newDocument.head.querySelectorAll('link[as="font"]')].forEach((link) => link.remove())
-  );
+  document.addEventListener("astro:before-swap", (e) => {
+    const event = e as TransitionBeforeSwapEvent;
+    [...event.newDocument.head.querySelectorAll(`link[as="font"]`)].forEach((link) => link.remove());
+    event.newDocument.documentElement.classList.toggle("dark", document.documentElement.classList.contains("dark"));
+  });
+</script>
+
+<script>
+  function initCopyCodeButtons() {
+    document.querySelectorAll("article pre code").forEach((codeBlock) => {
+      const pre = codeBlock.parentElement;
+      if (!pre || pre.querySelector(".copy-code-button")) return;
+
+      const button = document.createElement("button");
+      button.className = "copy-code-button";
+      button.setAttribute("aria-label", "Copy code");
+      button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+
+      button.addEventListener("click", async () => {
+        const text = codeBlock.textContent ?? "";
+        await navigator.clipboard.writeText(text);
+        button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+        setTimeout(() => {
+          button.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+        }, 2000);
+      });
+
+      pre.appendChild(button);
+    });
+  }
+
+  function initHeadingAnchors() {
+    document.querySelectorAll("article :is(h2, h3, h4)[id]").forEach((heading) => {
+      if (heading.querySelector(".heading-anchor")) return;
+      const anchor = document.createElement("a");
+      anchor.className = "heading-anchor";
+      anchor.href = `#${heading.id}`;
+      anchor.setAttribute("aria-label", `Link to ${heading.textContent}`);
+      anchor.textContent = "#";
+      heading.prepend(anchor);
+    });
+  }
+
+  function initReadingProgress() {
+    let bar = document.getElementById("reading-progress");
+    const isArticlePage = /^\/(notes|projects)\/[^/]+/.test(window.location.pathname);
+
+    if (!isArticlePage) {
+      bar?.remove();
+      return;
+    }
+
+    if (!bar) {
+      bar = document.createElement("div");
+      bar.id = "reading-progress";
+      document.body.prepend(bar);
+    }
+
+    function updateProgress() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0;
+      if (bar) bar.style.width = `${progress}%`;
+    }
+
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    updateProgress();
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    initCopyCodeButtons();
+    initHeadingAnchors();
+    initReadingProgress();
+  });
+
+  document.addEventListener("astro:after-swap", () => {
+    initCopyCodeButtons();
+    initHeadingAnchors();
+    initReadingProgress();
+  });
 </script>
 
 <script is:inline>
+  document.documentElement.classList.add("js-enabled");
+
   let abortController = null;
   const NAV_PATH_KEY = "nav.currentPath";
   const NAV_INTERNAL_KEY = "nav.hasInternalNav";
@@ -104,7 +182,7 @@ const { title, description, image = "/itsdaniel.png" } = Astro.props;
   function hasInternalNavigation() {
     try {
       return sessionStorage.getItem(NAV_INTERNAL_KEY) === "true";
-    } catch (e) {
+    } catch {
       return false;
     }
   }
@@ -193,7 +271,7 @@ const { title, description, image = "/itsdaniel.png" } = Astro.props;
         let userTheme;
         try {
           userTheme = localStorage.theme;
-        } catch (e) {
+        } catch {
           userTheme = null;
         }
 
@@ -210,11 +288,21 @@ const { title, description, image = "/itsdaniel.png" } = Astro.props;
 
   function animate() {
     const animateElements = document.querySelectorAll(".animate");
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      animateElements.forEach((element) => element.classList.add("show"));
+      return;
+    }
+
     const delay = 100;
+    const maxDelay = 1500;
     animateElements.forEach((element, index) => {
-      setTimeout(() => {
-        element.classList.add("show");
-      }, index * delay);
+      setTimeout(
+        () => {
+          element.classList.add("show");
+        },
+        Math.min(index * delay, maxDelay)
+      );
     });
   }
 
@@ -266,7 +354,7 @@ const { title, description, image = "/itsdaniel.png" } = Astro.props;
     let userTheme;
     try {
       userTheme = localStorage.theme;
-    } catch (e) {
+    } catch {
       userTheme = null;
     }
 
@@ -291,7 +379,7 @@ const { title, description, image = "/itsdaniel.png" } = Astro.props;
     let userTheme;
     try {
       userTheme = localStorage.theme;
-    } catch (e) {
+    } catch {
       console.warn("localStorage not available, using system preference");
       userTheme = null;
     }

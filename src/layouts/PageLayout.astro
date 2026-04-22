@@ -9,20 +9,24 @@ import Analytics from "@vercel/analytics/astro";
 type Props = {
   title: string;
   description: string;
+  ogType?: string;
 };
 
-const { title, description } = Astro.props;
+const { title, description, ogType } = Astro.props;
 const isHomePage = Astro.url.pathname === "/";
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <Head title={isHomePage ? SITE.NAME : `${title} | ${SITE.NAME}`} description={description} />
+    <Head title={isHomePage ? SITE.NAME : `${title} | ${SITE.NAME}`} description={description} ogType={ogType} />
     <Analytics />
   </head>
   <body>
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-black focus:text-white dark:focus:bg-white dark:focus:text-black focus:rounded">
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-black focus:text-white dark:focus:bg-white dark:focus:text-black focus:rounded"
+    >
       Skip to main content
     </a>
     <Header />

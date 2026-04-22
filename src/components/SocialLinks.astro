@@ -1,0 +1,22 @@
+---
+import Link from "@components/Link.astro";
+import { SITE, SOCIALS } from "@consts";
+---
+
+<ul class="animate flex flex-wrap gap-2">
+  {
+    SOCIALS.map((SOCIAL) => (
+      <li class="flex gap-x-2 text-nowrap">
+        <Link href={SOCIAL.HREF} external aria-label={`${SITE.NAME} on ${SOCIAL.NAME}`}>
+          {SOCIAL.NAME}
+        </Link>
+        {"/"}
+      </li>
+    ))
+  }
+  <li class="line-clamp-1">
+    <Link href={`mailto:${SITE.EMAIL}`} aria-label={`Email ${SITE.NAME}`}>
+      {SITE.EMAIL}
+    </Link>
+  </li>
+</ul>

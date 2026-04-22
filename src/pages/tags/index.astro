@@ -1,0 +1,43 @@
+---
+import PageLayout from "@layouts/PageLayout.astro";
+import Container from "@components/Container.astro";
+import Tag from "@components/Tag.astro";
+import { getAllNotes, getAllProjects } from "@lib/collections";
+
+const notes = await getAllNotes();
+const projects = await getAllProjects();
+
+const tagCounts = new Map<string, number>();
+for (const entry of [...notes, ...projects]) {
+  for (const tag of entry.data.tags ?? []) {
+    tagCounts.set(tag, (tagCounts.get(tag) ?? 0) + 1);
+  }
+}
+
+const tags = [...tagCounts.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+---
+
+<PageLayout title="Tags" description="Browse all tags.">
+  <Container>
+    <div class="space-y-10">
+      <h1 class="animate font-semibold text-black dark:text-white">Tags</h1>
+      {
+        tags.length > 0 ? (
+          <div class="animate flex flex-wrap gap-2">
+            {tags.map(([tag, count]) => (
+              <a
+                href={`/tags/${encodeURIComponent(tag)}/`}
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"
+              >
+                <span>{tag}</span>
+                <span class="text-xs text-black/40 dark:text-white/40">{count}</span>
+              </a>
+            ))}
+          </div>
+        ) : (
+          <p class="animate">No tags yet.</p>
+        )
+      }
+    </div>
+  </Container>
+</PageLayout>

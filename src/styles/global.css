@@ -79,6 +79,11 @@ article a:hover {
   @apply transition-all duration-700 ease-out;
 }
 
+/* Show content immediately when JS hasn't loaded */
+html:not(.js-enabled) .animate {
+  @apply opacity-100 translate-y-0;
+}
+
 .animate.show {
   @apply opacity-100 translate-y-0;
 }
@@ -125,4 +130,81 @@ blockquote::after {
 
 img:not([class*="rounded"]) {
   border-radius: 6px;
+}
+
+/* Focus-visible ring for keyboard navigation */
+a:focus-visible,
+button:focus-visible {
+  @apply outline-2 outline-offset-2 outline-black dark:outline-white rounded;
+}
+
+/* Table of contents — dotted leaders */
+.toc-list {
+  @apply space-y-1;
+}
+
+.toc-link {
+  @apply flex items-baseline gap-1;
+  @apply text-black/40 dark:text-white/40;
+  @apply hover:text-black dark:hover:text-white;
+  @apply transition-colors duration-300 ease-in-out;
+}
+
+.toc-text {
+  @apply shrink-0;
+}
+
+.toc-dots {
+  @apply flex-1 min-w-4;
+  border-bottom: 1px dotted currentColor;
+  opacity: 0.4;
+  translate: 0 -0.2em;
+}
+
+.toc-anchor {
+  @apply shrink-0 opacity-0 text-black/25 dark:text-white/25;
+  @apply transition-opacity duration-300 ease-in-out;
+}
+
+.toc-link:hover .toc-anchor {
+  @apply opacity-100;
+}
+
+/* Copy code button on code blocks */
+article pre {
+  @apply relative;
+}
+
+article pre .copy-code-button {
+  @apply absolute top-2 right-2 size-8 flex items-center justify-center;
+  @apply rounded border border-white/20 bg-white/10;
+  @apply opacity-0 transition-opacity duration-300 ease-in-out;
+  @apply text-white/60 hover:text-white hover:bg-white/20;
+}
+
+article pre:hover .copy-code-button,
+article pre .copy-code-button:focus-visible {
+  @apply opacity-100;
+}
+
+/* Heading anchor links */
+article :is(h2, h3, h4) {
+  @apply relative;
+}
+
+article :is(h2, h3, h4) .heading-anchor {
+  @apply absolute -left-5 top-0 text-black/0 dark:text-white/0;
+  @apply transition-colors duration-300 ease-in-out no-underline;
+}
+
+article :is(h2, h3, h4):hover .heading-anchor {
+  @apply text-black/25 dark:text-white/25;
+}
+
+/* Reading progress bar */
+#reading-progress {
+  @apply fixed top-0 left-0 h-0.5 z-[60];
+  @apply bg-black/15 dark:bg-white/20;
+  @apply transition-none;
+  width: 0%;
 }

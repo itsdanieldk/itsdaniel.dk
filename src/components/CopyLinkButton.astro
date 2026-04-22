@@ -1,0 +1,64 @@
+---
+
+---
+
+<button
+  id="copy-link-button"
+  aria-label="Copy link to clipboard"
+  class="group size-8 flex items-center justify-center rounded-full text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"
+>
+  <svg
+    id="copy-link-icon"
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+  <svg
+    id="copy-link-check"
+    class="hidden"
+    xmlns="http://www.w3.org/2000/svg"
+    width="16"
+    height="16"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="2"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    aria-hidden="true"
+  >
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>
+</button>
+
+<script>
+  function initCopyLinkButton() {
+    const button = document.getElementById("copy-link-button");
+    const icon = document.getElementById("copy-link-icon");
+    const check = document.getElementById("copy-link-check");
+    if (!button || !icon || !check) return;
+
+    button.addEventListener("click", async () => {
+      await navigator.clipboard.writeText(window.location.href);
+      icon.classList.add("hidden");
+      check.classList.remove("hidden");
+      setTimeout(() => {
+        check.classList.add("hidden");
+        icon.classList.remove("hidden");
+      }, 2000);
+    });
+  }
+
+  document.addEventListener("DOMContentLoaded", initCopyLinkButton);
+  document.addEventListener("astro:after-swap", initCopyLinkButton);
+</script>
