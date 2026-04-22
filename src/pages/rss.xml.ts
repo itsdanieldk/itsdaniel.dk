@@ -1,5 +1,5 @@
 import rss from "@astrojs/rss";
-import { HOME } from "@consts";
+import { SITE, HOME } from "@consts";
 import { getAllNotes, getAllProjects } from "@lib/collections";
 
 type Context = {
@@ -13,14 +13,14 @@ export async function GET(context: Context) {
   const items = [...notes, ...projects].sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 
   return rss({
-    title: HOME.TITLE,
+    title: SITE.NAME,
     description: HOME.DESCRIPTION,
     site: context.site,
     items: items.map((item) => ({
       title: item.data.title,
       description: item.data.description,
       pubDate: item.data.date,
-      link: `/${item.collection}/${item.slug}/`,
+      link: `/${item.collection}/${item.id}/`,
     })),
   });
 }

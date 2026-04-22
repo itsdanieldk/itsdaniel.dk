@@ -1,0 +1,30 @@
+---
+import type { MarkdownHeading } from "astro";
+
+type Props = {
+  headings: MarkdownHeading[];
+};
+
+const { headings } = Astro.props;
+const filteredHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+const showToc = filteredHeadings.length >= 3;
+---
+
+{
+  showToc && (
+    <nav class="animate my-8" aria-label="Table of contents">
+      <div class="text-sm font-semibold text-black dark:text-white mb-2">Contents</div>
+      <ul class="toc-list text-sm">
+        {filteredHeadings.map((heading) => (
+          <li class:list={[heading.depth === 3 && "pl-4"]}>
+            <a href={`#${heading.slug}`} class="toc-link group">
+              <span class="toc-text">{heading.text}</span>
+              <span class="toc-dots" aria-hidden="true" />
+              <span class="toc-anchor">#</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </nav>
+  )
+}

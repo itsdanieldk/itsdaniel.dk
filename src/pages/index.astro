@@ -3,11 +3,13 @@ import Container from "@components/Container.astro";
 import PageLayout from "@layouts/PageLayout.astro";
 import ArrowCard from "@components/ArrowCard.astro";
 import Link from "@components/Link.astro";
+import SocialLinks from "@components/SocialLinks.astro";
 import { SITE, HOME, SOCIALS } from "@consts";
 import { getAllNotes, getAllProjects } from "@lib/collections";
 
 const notes = (await getAllNotes()).slice(0, SITE.NUM_NOTES_ON_HOMEPAGE);
 const projects = (await getAllProjects()).slice(0, SITE.NUM_PROJECTS_ON_HOMEPAGE);
+const siteUrl = Astro.site?.toString() ?? "";
 ---
 
 <PageLayout title={HOME.TITLE} description={HOME.DESCRIPTION}>
@@ -19,32 +21,14 @@ const projects = (await getAllProjects()).slice(0, SITE.NUM_PROJECTS_ON_HOMEPAGE
       <section>
         <article class="space-y-4">
           <p class="animate">
-            Welcome! I'm Daniel, and I share my thoughts and experiences in software engineering, particularly functional programming,
-            distributed and parallel systems, and architecture.
+            I'm Daniel, a software engineer writing about functional programming, distributed systems, and software architecture. I primarily work with F# and C# on .NET and Azure.
           </p>
           <p class="animate">
-            I share notes whenever I solve an interesting problem or learn something new, with the goal of helping others along the way.
-            Right now I'm focused on .NET and Azure, so expect plenty of content on those topics.
+            Whenever I solve an interesting problem or learn something new, I write it up here.
           </p>
-          <p class="animate">If you'd like to get in touch, feel free to reach out on social media or send me an email.</p>
+          <p class="animate">Feel free to reach out on social media or send me an email.</p>
         </article>
-        <ul class="animate flex flex-wrap gap-2">
-          {
-            SOCIALS.map((SOCIAL) => (
-              <li class="flex gap-x-2 text-nowrap">
-                <Link href={SOCIAL.HREF} external aria-label={`${SITE.NAME} on ${SOCIAL.NAME}`}>
-                  {SOCIAL.NAME}
-                </Link>
-                {"/"}
-              </li>
-            ))
-          }
-          <li class="line-clamp-1">
-            <Link href={`mailto:${SITE.EMAIL}`} aria-label={`Email ${SITE.NAME}`}>
-              {SITE.EMAIL}
-            </Link>
-          </li>
-        </ul>
+        <SocialLinks />
       </section>
 
       <section class="animate space-y-6">
@@ -89,12 +73,12 @@ const projects = (await getAllProjects()).slice(0, SITE.NUM_PROJECTS_ON_HOMEPAGE
     "@context": "https://schema.org",
     "@type": "WebSite",
     name: SITE.NAME,
-    url: "https://itsdaniel.dk/",
+    url: siteUrl,
     description: HOME.DESCRIPTION,
     author: {
       "@type": "Person",
       name: "Daniel Larsen",
-      url: "https://itsdaniel.dk/about/",
+      url: `${siteUrl}about/`,
       sameAs: SOCIALS.map((social) => social.HREF),
     },
     inLanguage: "en-US",

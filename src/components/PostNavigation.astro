@@ -1,0 +1,39 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+type Props = {
+  prev?: CollectionEntry<"notes"> | CollectionEntry<"projects">;
+  next?: CollectionEntry<"notes"> | CollectionEntry<"projects">;
+};
+
+const { prev, next } = Astro.props;
+---
+
+{
+  (prev || next) && (
+    <nav class="animate flex gap-4 mt-16" aria-label="Previous and next posts">
+      <div class="flex-1">
+        {prev && (
+          <a
+            href={`/${prev.collection}/${prev.id}/`}
+            class="group flex flex-col py-3 px-4 rounded-lg border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"
+          >
+            <span class="text-xs text-black/40 dark:text-white/40 mb-1">&larr; Previous</span>
+            <span class="text-sm font-semibold line-clamp-1">{prev.data.title}</span>
+          </a>
+        )}
+      </div>
+      <div class="flex-1">
+        {next && (
+          <a
+            href={`/${next.collection}/${next.id}/`}
+            class="group flex flex-col py-3 px-4 rounded-lg border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out text-right"
+          >
+            <span class="text-xs text-black/40 dark:text-white/40 mb-1">Next &rarr;</span>
+            <span class="text-sm font-semibold line-clamp-1">{next.data.title}</span>
+          </a>
+        )}
+      </div>
+    </nav>
+  )
+}

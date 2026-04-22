@@ -2,28 +2,30 @@
 import PageLayout from "@layouts/PageLayout.astro";
 import Container from "@components/Container.astro";
 import Link from "@components/Link.astro";
-import { ABOUT, SITE, SOCIALS } from "@consts";
+import SocialLinks from "@components/SocialLinks.astro";
+import { ABOUT, SOCIALS } from "@consts";
+
+const siteUrl = Astro.site?.toString() ?? "";
 ---
 
 <PageLayout title={ABOUT.TITLE} description={ABOUT.DESCRIPTION}>
   <Container>
     <div class="space-y-8">
-      <div class="animate font-semibold text-black dark:text-white">About</div>
+      <h1 class="animate font-semibold text-black dark:text-white">About</h1>
       <article class="space-y-4">
         <p class="animate">
-          Hi! I'm Daniel Larsen, a Software Engineer from Denmark. I specialize in functional programming, distributed and parallel systems,
-          software architecture, and cloud computing. While F# is my favorite language, I primarily work with C# and also have experience
-          with Scala, SQL, TypeScript, and HTML/CSS.
+          I'm Daniel Larsen, a Software Engineer from Denmark specializing in functional programming, distributed systems, software
+          architecture, and cloud computing. F# is my favorite language, though I primarily work with C# alongside Scala, SQL, TypeScript,
+          and HTML/CSS.
         </p>
         <p class="animate">
-          I'm currently responsible for Backend Development at <Link href="https://clever.dk/" aria-label={`Clever`}>Clever</Link>, where I
-          build .NET solutions on Azure. My work focuses on scalable backend systems using microservices, serverless computing, and
-          cloud-native development practices. I enjoy solving problems, learning new technologies, and sharing knowledge through notes,
-          demos, and mentoring.
+          I'm responsible for Backend Development at <Link href="https://clever.dk/" aria-label={`Clever`}>Clever</Link>, building .NET solutions on
+          Azure, building scalable backend systems using microservices, serverless computing, and cloud-native practices. I enjoy solving problems,
+          learning new technologies, and sharing what I learn through notes, demos, and mentoring.
         </p>
         <p class="animate">
-          Outside programming, I stay active through running and weightlifting, explore new metal genres and bands, practice guitar, expand
-          my fragrance collection, and read Norse mythology and history.
+          Outside programming, I run and lift weights, explore new metal bands, practice guitar, collect fragrances, and read Norse
+          mythology and history.
         </p>
         <p class="animate">Questions or want to connect? Reach out anytime.</p>
       </article>
@@ -42,23 +44,7 @@ import { ABOUT, SITE, SOCIALS } from "@consts";
         />
       </picture>
 
-      <ul class="animate flex flex-wrap gap-2">
-        {
-          SOCIALS.map((SOCIAL) => (
-            <li class="flex gap-x-2 text-nowrap">
-              <Link href={SOCIAL.HREF} external aria-label={`${SITE.NAME} on ${SOCIAL.NAME}`}>
-                {SOCIAL.NAME}
-              </Link>
-              {"/"}
-            </li>
-          ))
-        }
-        <li class="line-clamp-1">
-          <Link href={`mailto:${SITE.EMAIL}`} aria-label={`Email ${SITE.NAME}`}>
-            {SITE.EMAIL}
-          </Link>
-        </li>
-      </ul>
+      <SocialLinks />
     </div>
   </Container>
 </PageLayout>
@@ -70,8 +56,8 @@ import { ABOUT, SITE, SOCIALS } from "@consts";
     "@context": "https://schema.org",
     "@type": "Person",
     name: "Daniel Larsen",
-    url: "https://itsdaniel.dk/",
-    image: "https://itsdaniel.dk/itsdaniel.png",
+    url: `${siteUrl}about/`,
+    image: `${siteUrl}itsdaniel.png`,
     jobTitle: "Software Engineer",
     worksFor: {
       "@type": "Organization",
@@ -82,6 +68,6 @@ import { ABOUT, SITE, SOCIALS } from "@consts";
       name: "Technical University of Denmark",
     },
     knowsAbout: ["Functional Programming", "Distributed Systems", "Software Architecture", "Cloud Computing", "F#", "C#", ".NET", "Azure"],
-    sameAs: ["https://github.com/itsdanieldk", "https://www.linkedin.com/in/itsdanieldk/"],
+    sameAs: SOCIALS.map((social) => social.HREF),
   })}
 />

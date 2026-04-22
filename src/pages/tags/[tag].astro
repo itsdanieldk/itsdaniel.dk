@@ -1,0 +1,68 @@
+---
+import type { CollectionEntry } from "astro:content";
+import PageLayout from "@layouts/PageLayout.astro";
+import Container from "@components/Container.astro";
+import ArrowCard from "@components/ArrowCard.astro";
+import BackToPrev from "@components/BackToPrev.astro";
+import { getAllNotes, getAllProjects } from "@lib/collections";
+
+export async function getStaticPaths() {
+  const notes = await getAllNotes();
+  const projects = await getAllProjects();
+  const tags = [...new Set([...notes, ...projects].flatMap((e) => e.data.tags ?? []))];
+  return tags.map((tag) => ({
+    params: { tag },
+    props: { tag },
+  }));
+}
+
+type Props = { tag: string };
+
+const { tag } = Astro.props;
+
+const allNotes = await getAllNotes();
+const allProjects = await getAllProjects();
+const notes = allNotes.filter((n) => n.data.tags?.includes(tag));
+const projects = allProjects.filter((p) => p.data.tags?.includes(tag));
+---
+
+<PageLayout title={`${tag}`} description={`Content tagged "${tag}"`}>
+  <Container>
+    <div class="space-y-10">
+      <div class="animate">
+        <BackToPrev href="/tags/"> Back to tags </BackToPrev>
+      </div>
+      <h1 class="animate font-semibold text-black dark:text-white">
+        Tagged &ldquo;{tag}&rdquo;
+      </h1>
+      {
+        notes.length > 0 && (
+          <section class="animate space-y-4">
+            <div class="font-semibold text-black dark:text-white">Notes</div>
+            <ul class="flex flex-col gap-4">
+              {notes.map((note) => (
+                <li>
+                  <ArrowCard entry={note} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+      {
+        projects.length > 0 && (
+          <section class="animate space-y-4">
+            <div class="font-semibold text-black dark:text-white">Projects</div>
+            <ul class="flex flex-col gap-4">
+              {projects.map((project) => (
+                <li>
+                  <ArrowCard entry={project} />
+                </li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+    </div>
+  </Container>
+</PageLayout>

@@ -2,6 +2,7 @@
 title: "FIO"
 description: "A type-safe, purely functional effect system for F#."
 date: 2025-11-02
+tags: ["F#", "concurrency", "effect system"]
 repoURL: "https://github.com/fs-fio/fio"
 ---
 

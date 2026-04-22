@@ -5,16 +5,15 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatDate(date: Date) {
-  return Intl.DateTimeFormat("en-US", {
-    month: "short",
-    day: "2-digit",
-    year: "numeric",
-  }).format(date);
-}
-
-export function readingTime(html: string) {
-  const textOnly = html.replace(/<[^>]+>/g, "").replace(/&[#a-z0-9]+;/gi, " ");
+export function readingTime(content: string) {
+  const textOnly = content
+    .replace(/```[\s\S]*?```/g, "") // remove fenced code blocks (must run before backtick strip)
+    .replace(/!\[[^\]]*\]\([^)]*\)/g, "") // remove images
+    .replace(/\[[^\]]*\]\([^)]*\)/g, (match) => match.replace(/\[([^\]]*)\]\([^)]*\)/, "$1")) // keep link text only
+    .replace(/<[^>]+>/g, "") // remove HTML tags
+    .replace(/&[#a-z0-9]+;/gi, " ") // remove HTML entities
+    .replace(/[*_~`#>|\\-]/g, "") // remove Markdown formatting chars
+    .replace(/\n{2,}/g, " "); // collapse whitespace
 
   const wordCount = textOnly
     .trim()

@@ -1,6 +1,7 @@
 ---
 import type { CollectionEntry } from "astro:content";
 import { readingTime } from "@lib/utils";
+import Tag from "@components/Tag.astro";
 
 type Props = {
   entry: CollectionEntry<"notes"> | CollectionEntry<"projects">;
@@ -11,7 +12,7 @@ const showReadingTime = entry.collection === "notes";
 ---
 
 <a
-  href={`/${entry.collection}/${entry.slug}/`}
+  href={`/${entry.collection}/${entry.id}/`}
   class="relative group flex py-4 px-5 pr-12 rounded-lg border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"
 >
   <div class="flex flex-col flex-1">
@@ -21,7 +22,18 @@ const showReadingTime = entry.collection === "notes";
     <div class="text-base">
       {entry.data.description}
     </div>
-    {showReadingTime && <div class="text-sm text-black/40 dark:text-white/40 mt-1">{readingTime(entry.body)}</div>}
+    <div class="flex items-center gap-2 mt-1">
+      {showReadingTime && <span class="text-sm text-black/40 dark:text-white/40">{readingTime(entry.body ?? "")}</span>}
+      {
+        entry.data.tags && entry.data.tags.length > 0 && (
+          <div class="flex flex-wrap gap-1">
+            {entry.data.tags.map((tag) => (
+              <Tag tag={tag} />
+            ))}
+          </div>
+        )
+      }
+    </div>
   </div>
   <svg
     xmlns="http://www.w3.org/2000/svg"
