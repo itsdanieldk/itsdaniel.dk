@@ -21,3 +21,25 @@
   </svg>
   <div class="text-sm">Back to top</div>
 </button>
+
+<script>
+  let controller: AbortController | null = null;
+
+  function init() {
+    controller?.abort();
+    const button = document.getElementById("back-to-top");
+    if (!button) return;
+    controller = new AbortController();
+    button.addEventListener(
+      "click",
+      (event) => {
+        event.preventDefault();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      },
+      { signal: controller.signal }
+    );
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+  document.addEventListener("astro:after-swap", init);
+</script>

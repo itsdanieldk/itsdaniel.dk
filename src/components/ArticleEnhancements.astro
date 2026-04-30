@@ -1,0 +1,71 @@
+---
+
+---
+
+<div id="reading-progress"></div>
+
+<script>
+  const COPY_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>`;
+  const CHECK_ICON = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+
+  function initCopyCodeButtons() {
+    document.querySelectorAll("article pre code").forEach((codeBlock) => {
+      const pre = codeBlock.parentElement;
+      if (!pre || pre.querySelector(".copy-code-button")) return;
+
+      const button = document.createElement("button");
+      button.className = "copy-code-button";
+      button.setAttribute("aria-label", "Copy code");
+      button.innerHTML = COPY_ICON;
+
+      button.addEventListener("click", async () => {
+        await navigator.clipboard.writeText(codeBlock.textContent ?? "");
+        button.innerHTML = CHECK_ICON;
+        setTimeout(() => (button.innerHTML = COPY_ICON), 2000);
+      });
+
+      pre.appendChild(button);
+    });
+  }
+
+  function initHeadingAnchors() {
+    document.querySelectorAll("article :is(h2, h3, h4)[id]").forEach((heading) => {
+      if (heading.querySelector(".heading-anchor")) return;
+      const anchor = document.createElement("a");
+      anchor.className = "heading-anchor";
+      anchor.href = `#${heading.id}`;
+      anchor.setAttribute("aria-label", `Link to ${heading.textContent}`);
+      anchor.textContent = "#";
+      heading.prepend(anchor);
+    });
+  }
+
+  let scrollController: AbortController | null = null;
+
+  function initReadingProgress() {
+    scrollController?.abort();
+    const bar = document.getElementById("reading-progress");
+    if (!bar) return;
+
+    scrollController = new AbortController();
+
+    function update() {
+      const scrollTop = window.scrollY;
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? Math.min((scrollTop / docHeight) * 100, 100) : 0;
+      bar!.style.width = `${progress}%`;
+    }
+
+    window.addEventListener("scroll", update, { passive: true, signal: scrollController.signal });
+    update();
+  }
+
+  function init() {
+    initCopyCodeButtons();
+    initHeadingAnchors();
+    initReadingProgress();
+  }
+
+  document.addEventListener("DOMContentLoaded", init);
+  document.addEventListener("astro:after-swap", init);
+</script>
