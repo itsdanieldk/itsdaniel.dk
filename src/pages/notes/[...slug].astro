@@ -3,8 +3,8 @@ import { type CollectionEntry, render } from "astro:content";
 import PageLayout from "@layouts/PageLayout.astro";
 import Container from "@components/Container.astro";
 import FormattedDate from "@components/FormattedDate.astro";
-import TableOfContents from "@components/TableOfContents.astro";
 import CopyLinkButton from "@components/CopyLinkButton.astro";
+import ArticleEnhancements from "@components/ArticleEnhancements.astro";
 import PostNavigation from "@components/PostNavigation.astro";
 import Tag from "@components/Tag.astro";
 import { readingTime } from "@lib/utils";
@@ -21,11 +21,12 @@ export async function getStaticPaths() {
 type Props = { entry: CollectionEntry<"notes">; prev?: CollectionEntry<"notes">; next?: CollectionEntry<"notes"> };
 
 const { entry: note, prev, next } = Astro.props;
-const { Content, headings } = await render(note);
+const { Content } = await render(note);
 const siteUrl = Astro.site?.toString() ?? "";
 ---
 
 <PageLayout title={note.data.title} description={note.data.description} ogType="article">
+  <ArticleEnhancements />
   <Container>
     <div class="animate">
       <BackToPrev href="/notes/"> Back to notes </BackToPrev>
@@ -66,7 +67,6 @@ const siteUrl = Astro.site?.toString() ?? "";
         )
       }
     </div>
-    <TableOfContents headings={headings} />
     <article class="animate">
       <Content />
     </article>

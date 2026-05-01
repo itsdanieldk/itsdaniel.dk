@@ -138,38 +138,6 @@ button:focus-visible {
   @apply outline-2 outline-offset-2 outline-black dark:outline-white rounded;
 }
 
-/* Table of contents — dotted leaders */
-.toc-list {
-  @apply space-y-1;
-}
-
-.toc-link {
-  @apply flex items-baseline gap-1;
-  @apply text-black/40 dark:text-white/40;
-  @apply hover:text-black dark:hover:text-white;
-  @apply transition-colors duration-300 ease-in-out;
-}
-
-.toc-text {
-  @apply shrink-0;
-}
-
-.toc-dots {
-  @apply flex-1 min-w-4;
-  border-bottom: 1px dotted currentColor;
-  opacity: 0.4;
-  translate: 0 -0.2em;
-}
-
-.toc-anchor {
-  @apply shrink-0 opacity-0 text-black/25 dark:text-white/25;
-  @apply transition-opacity duration-300 ease-in-out;
-}
-
-.toc-link:hover .toc-anchor {
-  @apply opacity-100;
-}
-
 /* Copy code button on code blocks */
 article pre {
   @apply relative;

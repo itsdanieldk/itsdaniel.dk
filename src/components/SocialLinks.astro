@@ -10,7 +10,7 @@ import { SITE, SOCIALS } from "@consts";
         <Link href={SOCIAL.HREF} external aria-label={`${SITE.NAME} on ${SOCIAL.NAME}`}>
           {SOCIAL.NAME}
         </Link>
-        {"/"}
+        <span aria-hidden="true">/</span>
       </li>
     ))
   }

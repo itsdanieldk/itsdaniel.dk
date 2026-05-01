@@ -48,11 +48,12 @@ Notes and projects live in `src/content/notes/` and `src/content/projects/` as M
 title: "Post Title"
 description: "Brief description"
 date: 2025-01-15
-draft: false          # optional
-tags: ["fp", "dotnet"] # optional, max 3
+updatedDate: 2025-02-01 # optional
+draft: false            # optional
+tags: ["fp", "dotnet"]  # optional, max 3
 ```
 
-**Projects frontmatter** (adds optional `demoURL`, `repoURL`, `tags`).
+**Projects frontmatter** (adds optional `demoURL`, `repoURL`).
 
 - Tags are optional but capped at **3 per item** (enforced by Zod schema).
 - Use kebab-case for content folder/slug names. Set `draft: true` to exclude from builds and feeds.

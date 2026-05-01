@@ -18,7 +18,27 @@ const { prev, next } = Astro.props;
             href={`/${prev.collection}/${prev.id}/`}
             class="group flex flex-col py-3 px-4 rounded-lg border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"
           >
-            <span class="text-xs text-black/40 dark:text-white/40 mb-1">&larr; Previous</span>
+            <span class="text-xs text-black/40 dark:text-white/40 mb-1 inline-flex items-center gap-1">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                class="size-3.5 stroke-2 fill-none stroke-current"
+              >
+                <line
+                  x1="5"
+                  y1="12"
+                  x2="19"
+                  y2="12"
+                  class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"
+                />
+                <polyline
+                  points="12 5 5 12 12 19"
+                  class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"
+                />
+              </svg>
+              Previous
+            </span>
             <span class="text-sm font-semibold line-clamp-1">{prev.data.title}</span>
           </a>
         )}
@@ -27,9 +47,29 @@ const { prev, next } = Astro.props;
         {next && (
           <a
             href={`/${next.collection}/${next.id}/`}
-            class="group flex flex-col py-3 px-4 rounded-lg border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out text-right"
+            class="group flex flex-col py-3 px-4 rounded-lg border border-black/15 dark:border-white/20 hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white transition-colors duration-300 ease-in-out"
           >
-            <span class="text-xs text-black/40 dark:text-white/40 mb-1">Next &rarr;</span>
+            <span class="text-xs text-black/40 dark:text-white/40 mb-1 inline-flex items-center gap-1">
+              Next
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+                class="size-3.5 stroke-2 fill-none stroke-current rotate-180"
+              >
+                <line
+                  x1="5"
+                  y1="12"
+                  x2="19"
+                  y2="12"
+                  class="translate-x-2 group-hover:translate-x-0 scale-x-0 group-hover:scale-x-100 transition-transform duration-300 ease-in-out"
+                />
+                <polyline
+                  points="12 5 5 12 12 19"
+                  class="translate-x-1 group-hover:translate-x-0 transition-transform duration-300 ease-in-out"
+                />
+              </svg>
+            </span>
             <span class="text-sm font-semibold line-clamp-1">{next.data.title}</span>
           </a>
         )}
