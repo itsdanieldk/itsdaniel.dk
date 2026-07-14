@@ -2,49 +2,47 @@
 title: "Principles of Functional Programming"
 description: "The core functional principles and why they matter."
 date: 2025-11-02
+updatedDate: 2026-07-13
 tags: ["functional programming", "F#", "software design"]
 ---
 
-I spent my early programming years writing Java. It got the job done, but there was always a lot of ceremony: class hierarchies, verbose patterns, state scattered across objects that made bugs hard to track down. When a university course introduced me to F#, the contrast was immediate. The code was lean. The compiler's type inference caught mistakes before I could even run the program. I was writing less and breaking less.
+I spent my early programming years writing Java. It got the job done, but there was a lot of ceremony: class hierarchies, verbose patterns, state scattered across objects. Then a course at DTU, [02157 Functional Programming](https://kurser.dtu.dk/course/02157), put F# in front of me, and the contrast was immediate. I was writing less code, and the compiler caught my mistakes before I could even run the program.
 
-That course changed how I approach all code, not just functional code. The principles I picked up have stayed with me because they're practical: fewer bugs in production, code that's easier to maintain, less time spent debugging things that shouldn't have been possible in the first place.
-
-This post walks through those core ideas. I'll use F# for examples, but the principles apply regardless of what language you work in.
+That course changed how I write all code, not just the functional kind. This post walks through the principles that stuck. The examples are in F#, and since I currently build backend systems for EV charging for a living, a few of them borrow that domain. The principles themselves apply in any language.
 
 ## Pure Functions
 
-A pure function always returns the same output for the same input and has no side effects: no global state mutations, no I/O, no surprises.
+A pure function always returns the same output for the same input and has no side effects.
 
 ```fsharp
 let add x y = x + y // Always predictable
 ```
 
-To see why this matters, consider the alternative:
+To see why that matters, here's the impure alternative:
 
 ```fsharp
-let mutable taxRate = 0.25
+let mutable tariff = 2.50 // Price per kWh in DKK
 
-let calculateTotal price =
-    taxRate <- taxRate + 0.01 // Modifies external state
-    price * (1.0 + taxRate)
+let sessionCost kWh =
+    tariff <- tariff + 0.25 // Modifies external state
+    kWh * tariff
 
-calculateTotal 100.0 // 126.0
-calculateTotal 100.0 // 127.0, different result, same input
+sessionCost 10.0 // 27.5
+sessionCost 10.0 // 30.0, different result, same input
 ```
 
-Every call changes `taxRate`, so the result depends on when and how often you call it. Now compare:
+Every call bumps `tariff`, so the result depends on when and how often you call it. Debugging code like this means reconstructing history. Compare:
 
 ```fsharp
-let calculateTotal taxRate price =
-    price * (1.0 + taxRate)
+let sessionCost tariff kWh = kWh * tariff
 
-calculateTotal 0.25 100.0 // 125.0
-calculateTotal 0.25 100.0 // 125.0, always the same
+sessionCost 2.50 10.0 // 25.0
+sessionCost 2.50 10.0 // 25.0, always the same
 ```
 
-The pure version takes everything it needs as arguments. You can call it from anywhere and know exactly what it'll do. Testing is straightforward: no setup, no teardown, no mocking global state.
+The pure version takes everything it needs as arguments. Testing it requires no setup: pass values in, check what comes out.
 
-A useful way to think about purity: if you can replace a function call with its result and nothing changes, the function is pure. This property is called *referential transparency*.
+A useful test for purity: if you can replace a function call with its result and nothing changes, the function is pure. This property is called *referential transparency*.
 
 ```fsharp
 let square x = x * x
@@ -52,24 +50,26 @@ let result = square 5 + square 5
 // You can swap in 25 + 25 and the program behaves identically
 ```
 
-Referential transparency is what makes pure functions composable and safe to refactor. It's also what lets compilers optimize aggressively.
+Referential transparency is what makes pure functions safe to refactor and easy to compose.
 
 ## Immutability
 
-Instead of changing existing values, you create new ones. This sounds wasteful, but it eliminates an entire class of bugs, especially in concurrent code where shared mutable state is the root of most headaches.
+Instead of changing existing values, you create new ones.
 
 ```fsharp
 let numbers = [1; 2; 3]
 let newNumbers = 0 :: numbers // [0; 1; 2; 3], original list unchanged
 ```
 
-The performance concern is worth addressing head-on. Functional data structures are *persistent*, meaning they share structure with previous versions rather than copying everything. When you prepend `0` to `numbers` above, the new list reuses the entire original `[1; 2; 3]` in memory. Only the new node gets allocated. This structural sharing is why immutable operations are often cheaper than most people expect, though the tradeoff varies by data structure and access pattern.
+This sounds wasteful, but functional data structures are *persistent*: they share structure with previous versions instead of copying. Prepending `0` above allocates a single node; the new list reuses `[1; 2; 3]` as its tail. Immutable operations are usually cheaper than people expect.
 
-When data can't change out from under you, reasoning about what your program does becomes straightforward. Combined with pure functions, immutability gives you a codebase where you can read any function in isolation and understand it fully.
+The payoff is that data can't change out from under you, which removes a whole class of bugs — especially in concurrent code, where shared mutable state causes most of the misery.
+
+To be clear, I still write `let mutable` inside a function when a local loop is the clearest way to express something. Contained mutation is an implementation detail. It's *shared* mutation that hurts.
 
 ## Expressions, Not Statements
 
-In most imperative languages, you write *statements*, instructions that do something but don't produce a value. An `if` block executes code; a `for` loop iterates. In functional programming, almost everything is an *expression* that evaluates to a value.
+In most imperative languages, `if` blocks and loops are *statements*: they do something but produce no value. In functional programming, almost everything is an *expression* that evaluates to a value.
 
 ```fsharp
 let score = 72
@@ -77,7 +77,7 @@ let status = if score >= 50 then "Pass" else "Fail"
 // status = "Pass"
 ```
 
-There's no need for a mutable variable that gets assigned inside each branch. The `if/else` itself produces a value, and you bind it directly. This applies to `match` expressions too:
+There's no mutable variable that gets assigned inside each branch. The `if/else` itself produces the value. Same for `match`:
 
 ```fsharp
 let level = 2
@@ -89,11 +89,11 @@ let description =
 // description = "Intermediate"
 ```
 
-This might seem like a small syntactic difference, but it has real consequences. When everything is an expression, you can't accidentally leave a variable uninitialized. You can't forget to assign in one branch of a conditional. And because each expression produces a value, you can nest and compose them freely, which is the foundation for the function-centric style we'll look at next.
+The practical consequence: you can't leave a variable uninitialized, and you can't forget to assign it in one branch, because the expression either produces a value or it doesn't compile. Expressions also nest and compose, which everything below builds on.
 
 ## First-Class and Higher-Order Functions
 
-In functional programming, functions are values. You can assign them to variables, pass them as arguments, and return them from other functions, just like any other data.
+In functional programming, functions are values. You can assign them to variables, pass them as arguments, and return them from other functions.
 
 ```fsharp
 let add x y = x + y
@@ -118,7 +118,7 @@ let doubled = List.map (fun x -> x * 2) [1; 2; 3] // [2; 4; 6]
 let evens = List.filter (fun x -> x % 2 = 0) [1; 2; 3; 4] // [2; 4]
 ```
 
-`List.map` and `List.filter` are workhorses of functional code. Instead of writing loops to transform data, you describe the transformation and let the function handle the iteration.
+`List.map` and `List.filter` are the workhorses of functional code. Instead of writing loops to transform data, you describe the transformation.
 
 ## Currying and Partial Application
 
@@ -135,7 +135,7 @@ let add10 = add 10
 List.map add10 numbers // [11; 12; 13; 14]
 ```
 
-Partial application lets you build specialized functions from general ones without any extra boilerplate.
+Partial application lets you build specialized functions from general ones without any boilerplate.
 
 ## Function Composition
 
@@ -149,11 +149,11 @@ let process = increment >> double // Increment, then double
 process 3 // 8
 ```
 
-The `>>` operator chains two functions: the output of the first feeds into the input of the second. This keeps your code focused on *what* transforms happen, not the mechanics of passing values between steps.
+The `>>` operator feeds the output of the first function into the second, so the code states *what* transforms happen rather than the mechanics of passing values along.
 
 ## Recursion
 
-Functional programming favors recursion over imperative loops. The reason is philosophical: traditional loops rely on mutable state (a counter that changes each iteration), which clashes with immutability.
+Functional programming favors recursion over imperative loops, since traditional loops rely on a mutable counter, which clashes with immutability.
 
 ```fsharp
 let rec factorial n =
@@ -170,75 +170,83 @@ let factorialTail n =
     loop 1 n
 ```
 
-Every recursive function needs a base case (here, `if n <= 1`) to terminate. The tail-recursive version restructures the computation so the recursive call is the last thing the function does, letting the compiler optimize it into a loop under the hood.
+Every recursive function needs a base case (here, `if n <= 1`) to terminate. The tail-recursive version restructures the computation so the recursive call is the last thing the function does, letting the compiler turn it into a loop under the hood.
 
-That said, explicit recursion isn't your everyday tool. Higher-order functions like `List.map`, `List.filter`, and `List.fold` handle most iteration more clearly. Recursion is the mechanism they're built on, but those abstractions, and the declarative style they enable, are what you'll actually reach for.
+That said, explicit recursion isn't your everyday tool. Higher-order functions like `List.map`, `List.filter`, and `List.fold` handle most iteration more clearly. Recursion is the mechanism they're built on, but those abstractions are what you'll actually reach for.
 
 ## Declarative Thinking
 
-Functional programming nudges you toward saying *what* you want rather than spelling out *how* to get there. To see the difference, consider summing the even numbers in a list.
-
-An imperative approach might look like this:
+Functional programming nudges you toward saying *what* you want rather than spelling out *how* to get there. Say you need the total energy delivered across completed charging sessions:
 
 ```fsharp
-let mutable total = 0
-for x in [1; 2; 3; 4] do
-    if x % 2 = 0 then
-        total <- total + x
-// total = 6
+type Session = { KWh: float; Completed: bool }
+
+let sessions =
+    [ { KWh = 12.5; Completed = true }
+      { KWh = 3.2; Completed = false }
+      { KWh = 20.1; Completed = true } ]
 ```
 
-You're managing a mutable accumulator, iterating manually, and checking conditions inside the loop. It works, but the intent is buried in mechanics.
-
-F# has a pipe operator (`|>`) that passes the result of one expression as the last argument to the next function. With it, the same logic reads top-to-bottom:
+An imperative approach:
 
 ```fsharp
-let totalEven =
-    [1; 2; 3; 4]
-    |> List.filter (fun x -> x % 2 = 0)
-    |> List.sum // 6
+let mutable total = 0.0
+for session in sessions do
+    if session.Completed then
+        total <- total + session.KWh
+// total = 32.6
 ```
 
-No intermediate variables, no loop counters. The code reads as: "take this list, keep the even numbers, sum them." Each transformation step is explicit and independently testable.
+It works, but the intent is buried in mechanics. F# has a pipe operator (`|>`) that passes the result of one expression to the next function, so the same logic reads top to bottom:
 
-If you step back, a pattern has been forming across all of these ideas. FP programs are built as pipelines of small, composable transformations over well-typed, immutable data. Pure functions ensure each step is predictable. Immutability guarantees data won't change between steps. Composition and piping connect the steps together. What remains is modeling the data itself.
+```fsharp
+let total =
+    sessions
+    |> List.filter (fun s -> s.Completed)
+    |> List.sumBy (fun s -> s.KWh)
+// 32.6
+```
+
+Take the sessions, keep the completed ones, sum the energy. Each step is explicit and independently testable.
+
+Step back and a pattern emerges across all of these ideas: FP programs are pipelines of small, composable transformations over immutable data. Pure functions make each step predictable, immutability guarantees the data holds still between steps, and composition connects them. What remains is modeling the data itself.
 
 ## Algebraic Data Types and Pattern Matching
 
-Functional programming gives you tools to model data precisely. The simplest example is `Option`, a type that explicitly represents the presence or absence of a value, replacing `null` entirely.
+Functional languages give you tools to model data precisely. The simplest example is `Option`, which represents the presence or absence of a value explicitly, replacing `null` entirely.
 
 ```fsharp
-let found = List.tryFind (fun x -> x > 3) [1; 2; 3; 4; 5]
-// found : int option = Some 4
+let chargePoints = [ "CP-001"; "CP-002"; "CP-007" ]
 
-let missing = List.tryFind (fun x -> x > 10) [1; 2; 3; 4; 5]
-// missing : int option = None
+let found = chargePoints |> List.tryFind (fun id -> id = "CP-007")
+// found : string option = Some "CP-007"
+
+let missing = chargePoints |> List.tryFind (fun id -> id = "CP-042")
+// missing : string option = None
 ```
 
-There's no `null`, no `NullReferenceException`. The type itself tells you a value might not be there, and the compiler won't let you use it without handling both cases.
+There's no `NullReferenceException` waiting to happen. The type says the value might be absent, and the compiler won't let you use it without handling both cases.
 
-`Option` is actually a *discriminated union*, an algebraic data type with named cases. You can define your own to model domain-specific data:
+`Option` is a *discriminated union*: a type with named cases. You can define your own to model domain state. A connector on a charge point, for instance, is always in exactly one of a few states:
 
 ```fsharp
-type Payment =
-    | Cash of decimal
-    | Card of string * decimal
+type ConnectorState =
+    | Available
+    | Charging of sessionId: string
+    | Faulted of errorCode: int
 
-let describe payment =
-    match payment with
-    | Cash amount -> sprintf "Paid %.2f in cash" amount
-    | Card (number, amount) -> sprintf "Paid %.2f by card %s" amount number
-
-describe (Card ("**** 4242", 2.3M)) // "Paid 2.30 by card **** 4242"
+let describe state =
+    match state with
+    | Available -> "Ready to charge"
+    | Charging sessionId -> $"Session {sessionId} in progress"
+    | Faulted code -> $"Out of order (error {code})"
 ```
 
-The `match` expression is exhaustive. If you add a new case to `Payment` and forget to handle it, the compiler warns you. Your type system catches logic errors before your users do.
-
-The deeper principle here is designing your types so that invalid data can't exist in the first place. If a payment is always either cash or card, the type enforces that. There's no "unknown" state, no forgotten edge case. You encode your business rules into the type system, and the compiler holds you to them.
+The `match` is exhaustive: add a `Reserved` case next sprint and the compiler points at every `match` that doesn't handle it. And there's no combination of boolean flags that means nothing, no "charging but also available" state. The business rule lives in the type, and the compiler enforces it.
 
 ## Explicit Error Handling
 
-Instead of throwing exceptions, functional code uses types like `Result` to represent outcomes explicitly.
+Instead of throwing exceptions, functional code tends to return types like `Result` that make failure part of the signature.
 
 ```fsharp
 let divide x y =
@@ -250,47 +258,43 @@ match divide 10 2 with
 | Error msg -> printfn "Error: %s" msg
 ```
 
-The caller can't ignore the error case. The type system forces you to deal with it. No more uncaught exceptions crashing your program three layers up the call stack.
-
-Where this really pays off is composition. Real-world code often chains multiple operations that can each fail. Without functional error handling, you end up with deeply nested `if` checks or scattered `try/catch` blocks. With `Result`, you chain operations using `Result.bind`. If any step fails, the rest are skipped and the error carries through:
+The caller can't ignore the error case; the type system forces the handling. Where this pays off is composition. Real code chains operations that can each fail, and without explicit errors you end up with nested `try/catch` or pyramids of `if`. With `Result`, you chain steps using `Result.bind`, and the first failure short-circuits the rest:
 
 ```fsharp
-let validatePositive n =
-    if n > 0 then Ok n
-    else Error "Must be positive"
+let validateEnergy kWh =
+    if kWh > 0.0 then Ok kWh
+    else Error "Energy must be positive"
 
-let validateSmall n =
-    if n < 100 then Ok n
-    else Error "Must be less than 100"
+let validateCapacity kWh =
+    if kWh <= 150.0 then Ok kWh
+    else Error "Exceeds connector capacity"
 
-5   |> validatePositive |> Result.bind validateSmall // Ok 5
--3  |> validatePositive |> Result.bind validateSmall // Error "Must be positive"
-200 |> validatePositive |> Result.bind validateSmall // Error "Must be less than 100"
+12.5  |> validateEnergy |> Result.bind validateCapacity // Ok 12.5
+-1.0  |> validateEnergy |> Result.bind validateCapacity // Error "Energy must be positive"
+200.0 |> validateEnergy |> Result.bind validateCapacity // Error "Exceeds connector capacity"
 ```
 
-Each validation is a small, testable function. The pipeline stops at the first failure and carries the error forward. No exceptions, no nested conditionals. Just data flowing through functions.
+Each validation is a small function you can test on its own, and the pipeline carries the first error forward.
 
 ## Separation of Effects
 
-One of the more advanced ideas: keep your core logic pure and push side effects to the edges of your program. Business rules stay deterministic and testable. I/O, state mutations, and network calls live in a thin outer shell.
+Keep your core logic pure and push side effects to the edges of your program. Business rules stay deterministic and testable; I/O, state mutations, and network calls live in a thin outer shell.
 
 ```fsharp
 // Pure core logic
-let calculateDiscount total =
-    if total > 100.0M then total * 0.9M
-    else total
+let sessionCost tariff kWh = kWh * tariff
 
 // Impure shell (I/O at the edges)
-let processOrder () =
-    let total = readTotalFromDatabase() // Side effect
-    let discounted = calculateDiscount total // Pure
-    saveToDatabase discounted // Side effect
+let finalizeSession sessionId =
+    let session = loadSession sessionId // Side effect
+    let cost = sessionCost session.Tariff session.KWh // Pure
+    saveInvoice sessionId cost // Side effect
 ```
 
-The pure `calculateDiscount` function is trivial to test: pass in a number, check the output. The impure `processOrder` is a thin wrapper that orchestrates I/O around it. When something breaks, you know where to look.
+The pure `sessionCost` is trivial to test: pass in numbers, check the output. The impure `finalizeSession` is a thin wrapper that orchestrates I/O around it. When something breaks, you know which half to suspect.
 
 ## Why These Principles Matter
 
-These aren't theoretical ideals. They solve real, everyday problems. Pure functions and immutability eliminate bugs that stem from hidden state. Code becomes testable without elaborate setup. Refactoring gets safer because each function can be reasoned about on its own. And when you come back to a codebase months later, the absence of side effects means you can pick up where you left off without re-learning the implementation.
+Pure functions and immutability remove the bugs that come from hidden state. Testing stops requiring elaborate setup. Refactoring gets safer because each function can be understood on its own. And when you come back to the code months later, there are no invisible side effects to re-learn.
 
-Looking back, the shift from Java to F# wasn't really about switching languages. It was about learning to think differently: favoring data over objects, transformations over mutations, types over runtime checks. Those habits stuck, and I carry them into everything I write now, whether it's F#, TypeScript, or anything else. Start with the principles, and the language matters less than you'd think.
+Looking back, switching from Java to F# mattered less than what the switch taught me: favor data over objects, transformations over mutation, types over runtime checks. Most of my day-to-day work today is C#, and the habits carry over directly — records, exhaustive `switch` expressions, LINQ pipelines, I/O pushed to the edges. The principles travel even where the language doesn't.

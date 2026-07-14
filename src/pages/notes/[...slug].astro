@@ -1,15 +1,8 @@
 ---
-import { type CollectionEntry, render } from "astro:content";
-import PageLayout from "@layouts/PageLayout.astro";
-import Container from "@components/Container.astro";
-import FormattedDate from "@components/FormattedDate.astro";
-import CopyLinkButton from "@components/CopyLinkButton.astro";
-import ArticleEnhancements from "@components/ArticleEnhancements.astro";
-import PostNavigation from "@components/PostNavigation.astro";
-import Tag from "@components/Tag.astro";
-import { readingTime } from "@lib/utils";
-import BackToPrev from "@components/BackToPrev.astro";
+import type { CollectionEntry } from "astro:content";
+import ArticleLayout from "@layouts/ArticleLayout.astro";
 import { getAllNotes } from "@lib/collections";
+import { SITE } from "@consts";
 
 export async function getStaticPaths() {
   const notes = await getAllNotes();
@@ -21,82 +14,22 @@ export async function getStaticPaths() {
 type Props = { entry: CollectionEntry<"notes">; prev?: CollectionEntry<"notes">; next?: CollectionEntry<"notes"> };
 
 const { entry: note, prev, next } = Astro.props;
-const { Content } = await render(note);
 const siteUrl = Astro.site?.toString() ?? "";
+const author = { "@type": "Person", name: SITE.AUTHOR, url: siteUrl };
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  headline: note.data.title,
+  description: note.data.description,
+  datePublished: note.data.date.toISOString(),
+  dateModified: (note.data.updatedDate ?? note.data.date).toISOString(),
+  author,
+  publisher: author,
+  mainEntityOfPage: {
+    "@type": "WebPage",
+    "@id": `${siteUrl}notes/${note.id}/`,
+  },
+};
 ---
 
-<PageLayout title={note.data.title} description={note.data.description} ogType="article">
-  <ArticleEnhancements />
-  <Container>
-    <div class="animate">
-      <BackToPrev href="/notes/"> Back to notes </BackToPrev>
-    </div>
-    <div class="space-y-1 my-10">
-      <div class="animate flex items-center gap-1.5">
-        <div class="font-base text-sm">
-          <FormattedDate date={note.data.date} />
-        </div>
-        &bull;
-        <div class="font-base text-sm">
-          {readingTime(note.body ?? "")}
-        </div>
-        {
-          note.data.updatedDate && note.data.updatedDate.getTime() !== note.data.date.getTime() && (
-            <>
-              &bull;
-              <div class="font-base text-sm">
-                Updated: <FormattedDate date={note.data.updatedDate} />
-              </div>
-            </>
-          )
-        }
-      </div>
-      <div class="animate flex items-center gap-2">
-        <h1 class="text-2xl font-semibold text-black dark:text-white">
-          {note.data.title}
-        </h1>
-        <CopyLinkButton />
-      </div>
-      {
-        note.data.tags && note.data.tags.length > 0 && (
-          <div class="animate flex flex-wrap gap-1.5">
-            {note.data.tags.map((tag) => (
-              <Tag tag={tag} href={`/tags/${encodeURIComponent(tag)}/`} />
-            ))}
-          </div>
-        )
-      }
-    </div>
-    <article class="animate">
-      <Content />
-    </article>
-    <PostNavigation prev={prev} next={next} />
-  </Container>
-</PageLayout>
-
-<script
-  is:inline
-  type="application/ld+json"
-  set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: note.data.title,
-    description: note.data.description,
-    datePublished: note.data.date.toISOString(),
-    dateModified: (note.data.updatedDate ?? note.data.date).toISOString(),
-    author: {
-      "@type": "Person",
-      name: "Daniel Larsen",
-      url: siteUrl,
-    },
-    publisher: {
-      "@type": "Person",
-      name: "Daniel Larsen",
-      url: siteUrl,
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `${siteUrl}notes/${note.id}/`,
-    },
-  })}
-/>
+<ArticleLayout entry={note} prev={prev} next={next} backHref="/notes/" backLabel="Back to notes" jsonLd={jsonLd} />

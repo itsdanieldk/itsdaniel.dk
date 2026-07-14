@@ -1,12 +1,9 @@
 import rss from "@astrojs/rss";
+import type { APIRoute } from "astro";
 import { SITE, HOME } from "@consts";
 import { getAllNotes, getAllProjects } from "@lib/collections";
 
-type Context = {
-  site: string;
-};
-
-export async function GET(context: Context) {
+export const GET: APIRoute = async (context) => {
   const notes = await getAllNotes();
   const projects = await getAllProjects();
 
@@ -15,7 +12,7 @@ export async function GET(context: Context) {
   return rss({
     title: SITE.NAME,
     description: HOME.DESCRIPTION,
-    site: context.site,
+    site: context.site ?? "https://itsdaniel.dk/",
     items: items.map((item) => ({
       title: item.data.title,
       description: item.data.description,
@@ -23,4 +20,4 @@ export async function GET(context: Context) {
       link: `/${item.collection}/${item.id}/`,
     })),
   });
-}
+};

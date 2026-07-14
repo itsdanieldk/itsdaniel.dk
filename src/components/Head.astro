@@ -1,22 +1,24 @@
 ---
 import "../styles/global.css";
-import "@fontsource/fira-sans/400.css";
-import "@fontsource/fira-sans/500.css";
-import "@fontsource/fira-sans/600.css";
-import "@fontsource/fira-sans/700.css";
-import "@fontsource/fira-sans/400-italic.css";
+import "@fontsource/fira-sans/latin-400.css";
+import "@fontsource/fira-sans/latin-500.css";
+import "@fontsource/fira-sans/latin-600.css";
+import "@fontsource/fira-sans/latin-700.css";
+import "@fontsource/fira-sans/latin-400-italic.css";
 import "@fontsource-variable/fira-code";
-import "@fontsource/metamorphous/400.css";
+import "@fontsource/metamorphous/latin-400.css";
+import firaSans400Url from "@fontsource/fira-sans/files/fira-sans-latin-400-normal.woff2?url";
+import metamorphousUrl from "@fontsource/metamorphous/files/metamorphous-latin-400-normal.woff2?url";
 
 import { ClientRouter } from "astro:transitions";
 import { SITE } from "@consts";
 
-interface Props {
+type Props = {
   title: string;
   description: string;
   image?: string;
   ogType?: string;
-}
+};
 
 const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
@@ -32,6 +34,10 @@ const { title, description, image = "/itsdaniel.png", ogType = "website" } = Ast
 <link rel="manifest" href="/site.webmanifest" />
 <meta name="generator" content={Astro.generator} />
 
+<!-- Preload above-the-fold fonts (body text + site title) -->
+<link rel="preload" href={firaSans400Url} as="font" type="font/woff2" crossorigin />
+<link rel="preload" href={metamorphousUrl} as="font" type="font/woff2" crossorigin />
+
 <!-- Canonical URL -->
 <link rel="canonical" href={canonicalURL} />
 
@@ -39,7 +45,7 @@ const { title, description, image = "/itsdaniel.png", ogType = "website" } = Ast
 <title>{title}</title>
 <meta name="title" content={title} />
 <meta name="description" content={description} />
-<meta name="author" content="Daniel Larsen" />
+<meta name="author" content={SITE.AUTHOR} />
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content={ogType} />
@@ -52,11 +58,11 @@ const { title, description, image = "/itsdaniel.png", ogType = "website" } = Ast
 <meta property="og:image:height" content="800" />
 
 <!-- Twitter -->
-<meta property="twitter:card" content="summary_large_image" />
-<meta property="twitter:url" content={Astro.url} />
-<meta property="twitter:title" content={title} />
-<meta property="twitter:description" content={description} />
-<meta property="twitter:image" content={new URL(image, Astro.url)} />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:url" content={Astro.url} />
+<meta name="twitter:title" content={title} />
+<meta name="twitter:description" content={description} />
+<meta name="twitter:image" content={new URL(image, Astro.url)} />
 
 <ClientRouter />
 
@@ -64,7 +70,7 @@ const { title, description, image = "/itsdaniel.png", ogType = "website" } = Ast
 <link rel="alternate" type="application/rss+xml" title={SITE.NAME} href={new URL("rss.xml", Astro.site)} />
 
 <!-- Theme Color -->
-<meta name="theme-color" content="#f5f5f4" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#f0efed" media="(prefers-color-scheme: light)" />
 <meta name="theme-color" content="#1c1917" media="(prefers-color-scheme: dark)" />
 
 <script is:inline>
