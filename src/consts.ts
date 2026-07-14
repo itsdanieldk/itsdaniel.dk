@@ -2,6 +2,7 @@ import type { Site, Metadata, Socials } from "@types";
 
 export const SITE: Site = {
   NAME: "itsdaniel",
+  AUTHOR: "Daniel Larsen",
   EMAIL: "hey@itsdaniel.dk",
   NUM_NOTES_ON_HOMEPAGE: 3,
   NUM_PROJECTS_ON_HOMEPAGE: 3,
@@ -22,9 +23,15 @@ export const PROJECTS: Metadata = {
   DESCRIPTION: "Open source projects and experiments in F#, .NET, and distributed systems.",
 };
 
+export const FRAGRANCES: Metadata = {
+  TITLE: "Fragrances",
+  DESCRIPTION: "The fragrance collection of Daniel Larsen, each bottle rated out of 10.",
+};
+
 export const ABOUT: Metadata = {
   TITLE: "About",
-  DESCRIPTION: "About Daniel Larsen, a software engineer from Denmark specializing in functional programming and cloud-native .NET systems.",
+  DESCRIPTION:
+    "About Daniel Larsen, a software engineer from Denmark specializing in functional programming and cloud-native .NET systems.",
 };
 
 export const SOCIALS: Socials = [

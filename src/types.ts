@@ -1,5 +1,6 @@
 export type Site = {
   NAME: string;
+  AUTHOR: string;
   EMAIL: string;
   NUM_NOTES_ON_HOMEPAGE: number;
   NUM_PROJECTS_ON_HOMEPAGE: number;

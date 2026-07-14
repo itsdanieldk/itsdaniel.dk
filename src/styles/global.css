@@ -6,6 +6,7 @@
     "Fira Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
   --font-mono: "Fira Code Variable", monospace;
   --font-title: "Metamorphous", serif;
+  --color-canvas: #f0efed; /* dim neutral page background; keep in sync with theme-color in Head.astro and site.webmanifest */
 }
 
 @custom-variant dark (&:where(.dark, .dark *));
@@ -27,14 +28,14 @@ body {
 body {
   @apply font-sans antialiased text-lg leading-relaxed;
   @apply flex flex-col;
-  @apply bg-stone-100 dark:bg-stone-900;
+  @apply bg-canvas dark:bg-stone-900;
   @apply text-black/50 dark:text-white/75;
 }
 
 header {
   @apply fixed top-0 left-0 right-0 z-50 py-6;
-  @apply bg-stone-100/75 dark:bg-stone-900/25;
-  @apply backdrop-blur-sm saturate-200;
+  @apply bg-canvas/75 dark:bg-stone-900/25;
+  @apply backdrop-blur-sm;
 }
 
 main {
@@ -56,7 +57,7 @@ article code {
 }
 
 article pre {
-  @apply text-base;
+  @apply relative text-base;
 }
 
 article pre code {
@@ -138,9 +139,11 @@ button:focus-visible {
   @apply outline-2 outline-offset-2 outline-black dark:outline-white rounded;
 }
 
-/* Copy code button on code blocks */
-article pre {
-  @apply relative;
+/* Shared bordered-card hover treatment (border radius stays at call sites) */
+.hover-card {
+  @apply border border-black/15 dark:border-white/20;
+  @apply hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white;
+  @apply transition-colors duration-300 ease-in-out;
 }
 
 article pre .copy-code-button {

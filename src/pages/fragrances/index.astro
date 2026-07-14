@@ -1,0 +1,44 @@
+---
+import PageLayout from "@layouts/PageLayout.astro";
+import Container from "@components/Container.astro";
+import FragranceCard from "@components/FragranceCard.astro";
+import { FRAGRANCES } from "@consts";
+import { getAllFragrances } from "@lib/collections";
+
+const { owned, wishlist } = await getAllFragrances();
+---
+
+<PageLayout title={FRAGRANCES.TITLE} description={FRAGRANCES.DESCRIPTION}>
+  <Container>
+    <div class="space-y-10">
+      <h1 class="animate font-semibold text-black dark:text-white">Fragrances</h1>
+      <p class="animate">What I own and how I'd rate it. Each entry links to Fragrantica.</p>
+      <ul class="animate flex flex-col gap-4">
+        {
+          owned.map((fragrance) => (
+            <li>
+              <FragranceCard entry={fragrance} />
+            </li>
+          ))
+        }
+      </ul>
+      {
+        wishlist.length > 0 && (
+          <div class="space-y-10">
+            <div class="space-y-2">
+              <h2 class="animate font-semibold text-black dark:text-white">On my radar</h2>
+              <p class="animate">Bottles I'm considering next.</p>
+            </div>
+            <ul class="animate flex flex-col gap-4">
+              {wishlist.map((fragrance) => (
+                <li>
+                  <FragranceCard entry={fragrance} />
+                </li>
+              ))}
+            </ul>
+          </div>
+        )
+      }
+    </div>
+  </Container>
+</PageLayout>

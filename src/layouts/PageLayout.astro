@@ -9,17 +9,18 @@ import Analytics from "@vercel/analytics/astro";
 type Props = {
   title: string;
   description: string;
+  image?: string;
   ogType?: string;
 };
 
-const { title, description, ogType } = Astro.props;
+const { title, description, image, ogType } = Astro.props;
 const isHomePage = Astro.url.pathname === "/";
 ---
 
 <!doctype html>
 <html lang="en">
   <head>
-    <Head title={isHomePage ? SITE.NAME : `${title} | ${SITE.NAME}`} description={description} ogType={ogType} />
+    <Head title={isHomePage ? SITE.NAME : `${title} | ${SITE.NAME}`} description={description} image={image} ogType={ogType} />
     <Analytics />
   </head>
   <body>

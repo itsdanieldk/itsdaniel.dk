@@ -1,31 +1,36 @@
 ---
+import type { CollectionEntry } from "astro:content";
 import PageLayout from "@layouts/PageLayout.astro";
 import Container from "@components/Container.astro";
 import ArrowCard from "@components/ArrowCard.astro";
 import BackToPrev from "@components/BackToPrev.astro";
-import { getAllNotes, getAllProjects } from "@lib/collections";
+import { getAllNotes, getAllProjects, getTagCounts } from "@lib/collections";
+import { slugifyTag } from "@lib/utils";
 
 export async function getStaticPaths() {
   const notes = await getAllNotes();
   const projects = await getAllProjects();
-  const tags = [...new Set([...notes, ...projects].flatMap((e) => e.data.tags ?? []))];
+  const tags = (await getTagCounts()).map(([tag]) => tag);
   return tags.map((tag) => ({
-    params: { tag },
-    props: { tag },
+    params: { tag: slugifyTag(tag) },
+    props: {
+      tag,
+      notes: notes.filter((n) => n.data.tags?.includes(tag)),
+      projects: projects.filter((p) => p.data.tags?.includes(tag)),
+    },
   }));
 }
 
-type Props = { tag: string };
+type Props = {
+  tag: string;
+  notes: CollectionEntry<"notes">[];
+  projects: CollectionEntry<"projects">[];
+};
 
-const { tag } = Astro.props;
-
-const allNotes = await getAllNotes();
-const allProjects = await getAllProjects();
-const notes = allNotes.filter((n) => n.data.tags?.includes(tag));
-const projects = allProjects.filter((p) => p.data.tags?.includes(tag));
+const { tag, notes, projects } = Astro.props;
 ---
 
-<PageLayout title={`${tag}`} description={`Content tagged "${tag}"`}>
+<PageLayout title={tag} description={`Content tagged "${tag}"`}>
   <Container>
     <div class="space-y-10">
       <div class="animate">

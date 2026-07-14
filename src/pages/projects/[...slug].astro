@@ -1,16 +1,9 @@
 ---
-import { type CollectionEntry, render } from "astro:content";
-import PageLayout from "@layouts/PageLayout.astro";
-import Container from "@components/Container.astro";
-import FormattedDate from "@components/FormattedDate.astro";
-import CopyLinkButton from "@components/CopyLinkButton.astro";
-import ArticleEnhancements from "@components/ArticleEnhancements.astro";
-import PostNavigation from "@components/PostNavigation.astro";
-import Tag from "@components/Tag.astro";
-import { readingTime } from "@lib/utils";
-import BackToPrev from "@components/BackToPrev.astro";
+import type { CollectionEntry } from "astro:content";
+import ArticleLayout from "@layouts/ArticleLayout.astro";
 import Link from "@components/Link.astro";
 import { getAllProjects } from "@lib/collections";
+import { SITE } from "@consts";
 
 export async function getStaticPaths() {
   const projects = await getAllProjects();
@@ -22,92 +15,40 @@ export async function getStaticPaths() {
 type Props = { entry: CollectionEntry<"projects">; prev?: CollectionEntry<"projects">; next?: CollectionEntry<"projects"> };
 
 const { entry: project, prev, next } = Astro.props;
-const { Content } = await render(project);
 const siteUrl = Astro.site?.toString() ?? "";
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "CreativeWork",
+  name: project.data.title,
+  description: project.data.description,
+  datePublished: project.data.date.toISOString(),
+  dateModified: (project.data.updatedDate ?? project.data.date).toISOString(),
+  author: {
+    "@type": "Person",
+    name: SITE.AUTHOR,
+    url: siteUrl,
+  },
+  ...(project.data.demoURL && { url: project.data.demoURL }),
+  ...(project.data.repoURL && { codeRepository: project.data.repoURL }),
+};
 ---
 
-<PageLayout title={project.data.title} description={project.data.description} ogType="article">
-  <ArticleEnhancements />
-  <Container>
-    <div class="animate">
-      <BackToPrev href="/projects/"> Back to projects </BackToPrev>
-    </div>
-    <div class="space-y-1 my-10">
-      <div class="animate flex items-center gap-1.5">
-        <div class="font-base text-sm">
-          <FormattedDate date={project.data.date} />
-        </div>
-        &bull;
-        <div class="font-base text-sm">
-          {readingTime(project.body ?? "")}
-        </div>
-        {
-          project.data.updatedDate && project.data.updatedDate.getTime() !== project.data.date.getTime() && (
-            <>
-              &bull;
-              <div class="font-base text-sm">
-                Updated: <FormattedDate date={project.data.updatedDate} />
-              </div>
-            </>
-          )
-        }
-      </div>
-      <div class="animate flex items-center gap-2">
-        <h1 class="text-2xl font-semibold text-black dark:text-white">
-          {project.data.title}
-        </h1>
-        <CopyLinkButton />
-      </div>
-      {
-        project.data.tags && project.data.tags.length > 0 && (
-          <div class="animate flex flex-wrap gap-1.5">
-            {project.data.tags.map((tag) => (
-              <Tag tag={tag} href={`/tags/${encodeURIComponent(tag)}/`} />
-            ))}
-          </div>
-        )
-      }
-      {
-        (project.data.demoURL || project.data.repoURL) && (
-          <nav class="animate flex gap-1">
-            {project.data.demoURL && (
-              <Link href={project.data.demoURL} external>
-                demo
-              </Link>
-            )}
-            {project.data.demoURL && project.data.repoURL && <span>/</span>}
-            {project.data.repoURL && (
-              <Link href={project.data.repoURL} external>
-                repository
-              </Link>
-            )}
-          </nav>
-        )
-      }
-    </div>
-    <article class="animate">
-      <Content />
-    </article>
-    <PostNavigation prev={prev} next={next} />
-  </Container>
-</PageLayout>
-
-<script
-  is:inline
-  type="application/ld+json"
-  set:html={JSON.stringify({
-    "@context": "https://schema.org",
-    "@type": "CreativeWork",
-    name: project.data.title,
-    description: project.data.description,
-    datePublished: project.data.date.toISOString(),
-    dateModified: (project.data.updatedDate ?? project.data.date).toISOString(),
-    author: {
-      "@type": "Person",
-      name: "Daniel Larsen",
-      url: siteUrl,
-    },
-    ...(project.data.demoURL && { url: project.data.demoURL }),
-    ...(project.data.repoURL && { codeRepository: project.data.repoURL }),
-  })}
-/>
+<ArticleLayout entry={project} prev={prev} next={next} backHref="/projects/" backLabel="Back to projects" jsonLd={jsonLd}>
+  {
+    (project.data.demoURL || project.data.repoURL) && (
+      <nav class="animate flex gap-1">
+        {project.data.demoURL && (
+          <Link href={project.data.demoURL} external>
+            demo
+          </Link>
+        )}
+        {project.data.demoURL && project.data.repoURL && <span>/</span>}
+        {project.data.repoURL && (
+          <Link href={project.data.repoURL} external>
+            repository
+          </Link>
+        )}
+      </nav>
+    )
+  }
+</ArticleLayout>

@@ -5,6 +5,15 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+/** URL-safe slug for a display tag: "F#" -> "fsharp", "effect system" -> "effect-system". */
+export function slugifyTag(tag: string) {
+  return tag
+    .toLowerCase()
+    .replace(/#/g, "sharp")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export function readingTime(content: string) {
   const textOnly = content
     .replace(/```[\s\S]*?```/g, "") // remove fenced code blocks (must run before backtick strip)

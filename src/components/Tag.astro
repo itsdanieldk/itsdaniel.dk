@@ -1,19 +1,12 @@
 ---
 type Props = {
   tag: string;
-  href?: string;
+  href: string;
 };
 
 const { tag, href } = Astro.props;
-const Element = href ? "a" : "span";
 ---
 
-<Element
-  href={href}
-  class:list={[
-    "inline-block text-xs px-2 py-0.5 rounded border border-black/15 dark:border-white/20 transition-colors duration-300 ease-in-out",
-    href && "hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white",
-  ]}
->
+<a href={href} class="hover-card inline-block text-xs px-2 py-0.5 rounded">
   {tag}
-</Element>
+</a>
