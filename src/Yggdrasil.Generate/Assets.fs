@@ -82,9 +82,22 @@ let private download (url: string) (dest: string) =
                      " A 404 usually means no prebuilt binary is published for this platform."
                  else
                      "")
-        use fs = File.Create tmp
-        resp.Content.CopyToAsync(fs).GetAwaiter().GetResult()
-        File.Move(tmp, dest, true)
+        // Close the file before moving it: on Windows File.Move fails if the handle is still open,
+        // whereas POSIX happily renames an open file — hence this only bit the Windows CI runner.
+        (
+            use fs = File.Create tmp
+            resp.Content.CopyToAsync(fs).GetAwaiter().GetResult()
+        )
+        // Windows Defender/Search can briefly hold a freshly written binary open to scan it, which
+        // surfaces as a sharing-violation IOException on the rename; retry a few times before failing.
+        let rec move attempt =
+            try
+                File.Move(tmp, dest, true)
+            with :? IOException when attempt < 5 ->
+                System.Threading.Thread.Sleep(100 * attempt)
+                move (attempt + 1)
+
+        move 1
     with _ ->
         if File.Exists tmp then File.Delete tmp
         reraise ()
