@@ -1,0 +1,13 @@
+<Solution>
+
+  <Folder Name="/src/">
+    <Project Path="src/Yggdrasil.Content/Yggdrasil.Content.fsproj" />
+    <Project Path="src/Yggdrasil.Generate/Yggdrasil.Generate.fsproj" />
+    <Project Path="src/Yggdrasil.Web/Yggdrasil.Web.fsproj" />
+  </Folder>
+
+  <Folder Name="/tests/">
+    <Project Path="tests/Yggdrasil.Tests/Yggdrasil.Tests.fsproj" />
+  </Folder>
+
+</Solution>

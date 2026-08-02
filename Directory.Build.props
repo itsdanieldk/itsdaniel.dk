@@ -1,0 +1,9 @@
+<Project>
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <OtherFlags>$(OtherFlags) --warnon:1182</OtherFlags>
+  </PropertyGroup>
+
+</Project>

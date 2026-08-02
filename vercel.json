@@ -1,4 +1,14 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "dotnet run --project src/Yggdrasil.Generate",
+  "outputDirectory": "dist",
+  "installCommand": "true",
+  "framework": null,
+  "git": {
+    "deploymentEnabled": false
+  },
+  "cleanUrls": true,
+  "trailingSlash": false,
   "headers": [
     {
       "source": "/(.*)",
@@ -17,11 +27,11 @@
         },
         {
           "key": "Permissions-Policy",
-          "value": "camera=(), microphone=(), geolocation=()"
+          "value": "camera=(), microphone=(), geolocation=(), browsing-topics=()"
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://va.vercel-scripts.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+          "value": "default-src 'self'; script-src 'self' 'unsafe-inline' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https://va.vercel-scripts.com; manifest-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
         },
         {
           "key": "Strict-Transport-Security",
@@ -30,11 +40,38 @@
       ]
     },
     {
-      "source": "/_astro/(.*)",
+      "source": "/fonts/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/assets/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=0, must-revalidate"
+        }
+      ]
+    },
+    {
+      "source": "/images/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=86400, stale-while-revalidate=604800"
+        }
+      ]
+    },
+    {
+      "source": "/og/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600, stale-while-revalidate=86400"
         }
       ]
     },
@@ -48,7 +85,7 @@
       ]
     },
     {
-      "source": "/itsdaniel(.*)",
+      "source": "/avatar(.*)",
       "headers": [
         {
           "key": "Cache-Control",

@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <Compile Include="Prelude.fs" />
+    <Compile Include="Domain.fs" />
+    <Compile Include="DateParser.fs" />
+    <Compile Include="Util.fs" />
+    <Compile Include="Site.fs" />
+    <Compile Include="Parser.fs" />
+    <Compile Include="Highlight.fs" />
+    <Compile Include="Markdown.fs" />
+    <Compile Include="Fragrance.fs" />
+    <Compile Include="Content.fs" />
+    <Compile Include="Loader.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Markdig" />
+    <PackageReference Include="YamlDotNet" />
+    <PackageReference Include="TextMateSharp" />
+  </ItemGroup>
+
+</Project>
