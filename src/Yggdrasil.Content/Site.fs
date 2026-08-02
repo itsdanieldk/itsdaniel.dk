@@ -206,11 +206,10 @@ module Site =
             try
                 parse (deserializer.Deserialize<SiteDto>(File.ReadAllText path))
             with ex ->
-                let rec detail (e: exn) =
-                    match e.InnerException with
-                    | null -> e.Message
-                    | inner -> e.Message + " → " + detail inner
-
+                let rec detail (ex: exn) =
+                    match ex.InnerException with
+                    | null -> ex.Message
+                    | inner -> ex.Message + " → " + detail inner
                 Error [ $"{path}: invalid YAML: {detail ex}" ]
 
     let absoluteUrl (config: SiteConfig) (path: string) =
