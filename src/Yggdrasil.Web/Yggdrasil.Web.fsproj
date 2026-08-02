@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <Compile Include="Components.fs" />
+    <Compile Include="ArticleLayout.fs" />
+    <Compile Include="JsonLd.fs" />
+    <Compile Include="Layouts.fs" />
+    <Compile Include="Feed.fs" />
+    <Compile Include="Views/Page.fs" />
+    <Compile Include="Views/Note.fs" />
+    <Compile Include="Views/Project.fs" />
+    <Compile Include="Views/Fragrance.fs" />
+    <Compile Include="Views/Tag.fs" />
+    <Compile Include="Views/NotFound.fs" />
+    <Compile Include="Routes.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Giraffe.ViewEngine" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../Yggdrasil.Content/Yggdrasil.Content.fsproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <IsPackable>false</IsPackable>
+    <GenerateProgramFile>false</GenerateProgramFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Support.fs" />
+    <Compile Include="ContentTests.fs" />
+    <Compile Include="WebTests.fs" />
+    <Compile Include="OgImageTests.fs" />
+    <Compile Include="AssetsTests.fs" />
+    <Compile Include="ConfigTests.fs" />
+    <Compile Include="SiteConfigTests.fs" />
+    <Compile Include="Main.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Expecto" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="YoloDev.Expecto.TestSdk" />
+    <PackageReference Include="coverlet.collector" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../src/Yggdrasil.Web/Yggdrasil.Web.fsproj" />
+    <ProjectReference Include="../../src/Yggdrasil.Generate/Yggdrasil.Generate.fsproj" />
+  </ItemGroup>
+
+</Project>

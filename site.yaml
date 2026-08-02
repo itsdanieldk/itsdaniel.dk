@@ -1,0 +1,78 @@
+# Who this site is about. Everything here is read at build time and threaded through every
+# renderer — changing identity never means editing F#.
+#
+# Unknown keys are an error, so a typo fails the build rather than silently reverting a field.
+
+name: itsdaniel
+author: Daniel Larsen
+tagline: Software Engineer
+email: hey@itsdaniel.dk
+url: https://itsdaniel.dk/
+
+# `path` is a prefix: /avatar resolves to /avatar.png, /avatar-400.webp, -600, -800.
+# Replace the files under static/ to change the picture.
+avatar:
+  path: /avatar
+  alt: Picture of Daniel Larsen
+
+# Biographical facts, emitted only as schema.org structured data on the About page.
+# All optional — omit a key and it simply won't appear.
+person:
+  worksFor: Clever
+  alumniOf: Technical University of Denmark
+  knowsAbout:
+    - Functional Programming
+    - Distributed Systems
+    - Software Architecture
+    - Cloud Computing
+    - F#
+    - C#
+    - .NET
+    - Azure
+
+# Header navigation, in order. `label` is both the link text and the active-section key.
+nav:
+  - { label: notes, href: /notes }
+  - { label: projects, href: /projects }
+  - { label: fragrances, href: /fragrances }
+  - { label: tags, href: /tags }
+  - { label: about, href: /about }
+
+socials:
+  - name: github
+    href: https://github.com/itsdanieldk/
+  - name: linkedin
+    href: https://www.linkedin.com/in/itsdanieldk/
+
+# Tags drawn on the fallback Open Graph card (og/default.png). The card's title is
+# "<author> — <tagline>".
+ogDefaultTags:
+  - functional programming
+  - F#
+  - .NET
+
+# How many entries the home page lists before "see all".
+homepage:
+  notes: 3
+  projects: 3
+
+# Titles and descriptions for the generated index pages.
+pages:
+  home:
+    title: Home
+    description: Software engineer writing about functional programming, distributed systems, and .NET. By Daniel Larsen.
+  notes:
+    title: Notes
+    description: Notes on functional programming, software architecture, and lessons from building backend systems.
+  projects:
+    title: Projects
+    description: Open source projects and experiments in F#, .NET, and distributed systems.
+  fragrances:
+    title: Fragrances
+    description: The fragrance collection of Daniel Larsen, each bottle rated out of 10.
+  tags:
+    title: Tags
+    description: Browse notes and projects by topic — functional programming, F#, .NET, distributed systems, and more.
+  about:
+    title: About
+    description: About Daniel Larsen, a software engineer from Denmark specializing in functional programming and cloud-native .NET systems.

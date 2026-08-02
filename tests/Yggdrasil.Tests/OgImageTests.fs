@@ -1,0 +1,92 @@
+module Yggdrasil.Tests.OgImageTests
+
+open Yggdrasil.Content
+open Yggdrasil.Generate
+open Yggdrasil.Tests.Support
+
+open System
+open System.IO
+
+open Expecto
+
+let private fontsDir = Path.Combine(projectRoot, "assets", "fonts")
+
+let private pngSize (path: string) =
+    let bytes = File.ReadAllBytes path
+    let signature = [| 0x89uy; 0x50uy; 0x4Euy; 0x47uy; 0x0Duy; 0x0Auy; 0x1Auy; 0x0Auy |]
+
+    if bytes.Length < 24 then
+        failtestf "%s is only %d bytes — not a PNG" path bytes.Length
+
+    if bytes[0..7] <> signature then
+        failtestf "%s does not start with the PNG signature" path
+
+    let readInt offset =
+        (int bytes[offset] <<< 24)
+        ||| (int bytes[offset + 1] <<< 16)
+        ||| (int bytes[offset + 2] <<< 8)
+        ||| int bytes[offset + 3]
+
+    readInt 16, readInt 20
+
+let private mkTmp () =
+    Path.Combine(Path.GetTempPath(), "yggdrasil-og-" + Guid.NewGuid().ToString "N")
+
+let private noteWith id title tags =
+    { Id = id
+      Title = title
+      Description = "d"
+      Date = DateOnly(2024, 1, 1)
+      UpdatedDate = None
+      Body = ""
+      ReadingTime = "1 min read"
+      Tags = tags
+      Draft = false
+      Featured = false }
+
+[<Tests>]
+let tests =
+
+    testList "OgImage" [
+        test "writes a 1200x630 card for the default page and every note/project, at the paths the head/JSON-LD reference" {
+            // Arrange
+            let tmp = mkTmp ()
+
+            let cards =
+                Site.defaultOgImagePath
+                :: [ for n in content.Notes -> Site.ogImagePath "notes" n.Id ]
+                @ [ for p in content.Projects -> Site.ogImagePath "projects" p.Id ]
+
+            try
+                // Act
+                OgImage.generateAll config fontsDir tmp content.Notes content.Projects
+
+                // Assert
+                for rel in cards do
+                    let file = Path.Combine(tmp, rel.TrimStart '/')
+                    Expect.isTrue (File.Exists file) $"a card exists at {rel}"
+                    Expect.equal (pngSize file) (1200, 630) $"{rel} is 1200x630"
+            finally
+                Directory.Delete(tmp, true)
+        }
+
+        test "renders long titles, empty tags, and more than three tags without error" {
+            // Arrange
+            let tmp = mkTmp ()
+
+            let notes =
+                [ noteWith "long-title" (String.replicate 30 "Verylongword ") [ "a"; "b"; "c"; "d"; "e" ]
+                  noteWith "short-no-tags" "Hi" [] ]
+
+            try
+                // Act
+                OgImage.generateAll config fontsDir tmp notes []
+
+                // Assert
+                for n in notes do
+                    let file = Path.Combine(tmp, (Site.ogImagePath "notes" n.Id).TrimStart '/')
+                    Expect.equal (pngSize file) (1200, 630) $"{n.Id} is 1200x630"
+            finally
+                Directory.Delete(tmp, true)
+        }
+    ]

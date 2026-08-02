@@ -1,0 +1,145 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore
+        run: dotnet restore
+
+      - name: Test
+        run: >
+          dotnet test tests/Yggdrasil.Tests/Yggdrasil.Tests.fsproj
+          --no-restore
+          --collect:"XPlat Code Coverage"
+          --results-directory ./coverage
+
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/**/coverage.cobertura.xml
+          if-no-files-found: ignore
+
+  generate:
+    name: generate (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Cache tool binaries
+        uses: actions/cache@v4
+        with:
+          path: .bin
+          key: tools-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/Yggdrasil.Generate/Assets.fs') }}
+
+      - name: Generate site
+        run: dotnet run --project src/Yggdrasil.Generate
+
+      - name: Check the output
+        shell: bash
+        run: |
+          set -euo pipefail
+          fail() { echo "::error::$1"; exit 1; }
+
+          [ -f dist/index.html ] || fail "dist/index.html missing"
+          [ -f dist/404.html ]   || fail "dist/404.html missing"
+
+          html=$(find dist -name '*.html' | wc -l | tr -d ' ')
+          [ "$html" -ge 15 ] || fail "expected at least 15 HTML files, found $html"
+
+          css=$(wc -c < dist/assets/css/app.css | tr -d ' ')
+          [ "$css" -gt 20000 ] || fail "app.css is only ${css} bytes; Tailwind likely did not scan the views"
+
+          js=$(wc -c < dist/assets/js/app.js | tr -d ' ')
+          [ "$js" -gt 0 ] || fail "app.js is empty; esbuild did not run"
+
+          cards=$(find dist/og -name '*.png' | wc -l | tr -d ' ')
+          [ "$cards" -ge 3 ] || fail "expected at least 3 OG cards, found $cards"
+
+          for feed in rss.xml sitemap-0.xml sitemap-index.xml; do
+            python3 -c "import xml.etree.ElementTree as E,sys; E.parse('dist/$feed')" \
+              || fail "dist/$feed is not well-formed XML"
+          done
+
+          echo "ok: ${html} HTML files, ${cards} OG cards, ${css} bytes CSS, ${js} bytes JS"
+
+  deploy:
+    needs: [test, generate]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Cache tool binaries
+        uses: actions/cache@v4
+        with:
+          path: .bin
+          key: tools-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('src/Yggdrasil.Generate/Assets.fs') }}
+
+      - name: Install the Vercel CLI
+        run: npm install --global vercel@latest
+
+      - name: Pull project settings
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy
+        id: deploy
+        run: |
+          set -euo pipefail
+          url=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }})
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+          echo "deployed to $url"
+
+      - name: Smoke-test the deployment
+        run: |
+          set -euo pipefail
+          url="${{ steps.deploy.outputs.url }}"
+          fail() { echo "::error::$1"; exit 1; }
+
+          code=$(curl -sS -o /dev/null -w '%{http_code}' "$url/")
+          [ "$code" = "200" ] || fail "home page returned HTTP $code"
+
+          headers=$(curl -sSI "$url/")
+          for header in content-security-policy strict-transport-security x-content-type-options; do
+            grep -iq "^$header:" <<< "$headers" || fail "$header missing — the vercel.json translation dropped it"
+          done
+
+          code=$(curl -sS -o /dev/null -w '%{http_code}' "$url/about")
+          [ "$code" = "200" ] || fail "/about returned HTTP $code — cleanUrls did not survive"
+
+          echo "ok: home and /about serve 200 with security headers intact"

@@ -1,0 +1,234 @@
+@import "tailwindcss" source(none);
+@import "./fonts.css";
+
+@plugin "@tailwindcss/typography";
+
+@source "../css";
+@source "../js";
+@source "../../src/Yggdrasil.Web";
+
+@theme {
+  --font-sans:
+    "Fira Sans", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  --font-mono: "Fira Code", monospace;
+  --font-title: "Metamorphous", serif;
+  --color-canvas: #f0efed;
+  --color-accent: #7c5cdb;
+}
+
+@custom-variant dark (&:where(html.dark, html.dark *));
+
+html {
+  overflow-y: scroll;
+  color-scheme: light;
+  scroll-behavior: smooth;
+}
+
+html.dark {
+  color-scheme: dark;
+  --color-accent: #b8a6f2;
+}
+
+html,
+body {
+  @apply size-full;
+}
+
+body {
+  @apply font-sans antialiased;
+  font-size: 1.125rem;
+  line-height: 1.7;
+  @apply flex flex-col;
+  @apply bg-canvas dark:bg-stone-900;
+  @apply text-black/50 dark:text-white/75;
+}
+
+header {
+  @apply fixed top-0 left-0 right-0 z-50 py-6;
+  @apply bg-canvas/75 dark:bg-stone-900/25;
+  @apply backdrop-blur-sm;
+}
+
+main {
+  @apply flex-1 py-36;
+}
+
+footer {
+  @apply py-6 text-base;
+}
+
+article {
+  @apply max-w-full prose prose-lg dark:prose-invert prose-img:mx-auto prose-img:my-auto;
+  @apply prose-headings:font-semibold prose-p:font-sans;
+  @apply prose-headings:text-black prose-headings:dark:text-white;
+  @apply prose-code:before:content-none prose-code:after:content-none;
+}
+
+article :not(pre) > code {
+  @apply font-mono text-[0.9em] rounded px-1.5 py-0.5;
+  @apply bg-black/5 dark:bg-white/10;
+}
+
+article code {
+  @apply font-mono;
+}
+
+article pre {
+  @apply relative text-base;
+  @apply rounded-lg;
+}
+
+article pre code {
+  @apply font-mono text-base;
+}
+
+article a {
+  @apply font-sans text-current underline underline-offset-2;
+  @apply decoration-black/15 dark:decoration-white/30;
+  @apply transition-colors duration-300 ease-in-out;
+}
+
+article a:hover {
+  @apply text-accent decoration-accent;
+}
+
+article pre {
+  overflow-x: auto;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+html.dark .tm {
+  background-color: var(--tm-dark-bg) !important;
+}
+
+html.dark .tm code,
+html.dark .tm span {
+  color: var(--tm-dark) !important;
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.animate {
+  animation: reveal 500ms ease-out both;
+  animation-delay: calc(min(var(--i, 0), 6) * 70ms);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  html *,
+  html body * {
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
+  }
+}
+
+html #back-to-top {
+  @apply opacity-0 pointer-events-none;
+}
+
+html.scrolled #back-to-top {
+  @apply opacity-100 pointer-events-auto;
+}
+
+blockquote {
+  quotes: none;
+  font-weight: normal;
+  @apply border-l-2 border-black/15 dark:border-white/20 pl-4;
+  @apply text-black/45 dark:text-white/55;
+}
+
+blockquote::before,
+blockquote::after {
+  content: none;
+}
+
+article hr {
+  @apply border-black/10 dark:border-white/15;
+}
+
+img:not([class*="rounded"]) {
+  border-radius: 6px;
+}
+
+a:focus-visible,
+button:focus-visible {
+  @apply outline-2 outline-offset-2 outline-accent rounded;
+}
+
+::selection {
+  background-color: color-mix(in oklab, var(--color-accent) 22%, transparent);
+}
+
+#main-content {
+  scroll-margin-top: 6rem;
+}
+
+.hover-card {
+  @apply border border-black/15 dark:border-white/20;
+  @apply hover:bg-black/5 dark:hover:bg-white/5 hover:text-black dark:hover:text-white;
+  @apply hover:border-black/25 dark:hover:border-white/30;
+  @apply transition-colors duration-300 ease-in-out;
+}
+
+article pre .copy-code-button {
+  @apply absolute top-2 right-2 size-8 flex items-center justify-center;
+  @apply rounded border border-white/20 bg-white/10;
+  @apply opacity-0 transition-opacity duration-300 ease-in-out;
+  @apply text-white/60 hover:text-white hover:bg-white/20;
+}
+
+article pre:hover .copy-code-button,
+article pre .copy-code-button:focus-visible {
+  @apply opacity-100;
+}
+
+article :is(h2, h3, h4) {
+  @apply relative scroll-mt-24;
+}
+
+article :is(h2, h3, h4) .heading-anchor {
+  @apply absolute -left-5 top-0 text-black/0 dark:text-white/0;
+  @apply transition-colors duration-300 ease-in-out no-underline;
+}
+
+article :is(h2, h3, h4):hover .heading-anchor {
+  @apply text-black/25 dark:text-white/25;
+}
+
+@keyframes reading-progress {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+#reading-progress {
+  @apply fixed top-0 left-0 h-0.5 z-60;
+  @apply bg-black/15 dark:bg-white/20;
+  width: 0;
+}
+
+@supports (animation-timeline: scroll()) {
+  #reading-progress {
+    animation: reading-progress linear;
+    animation-timeline: scroll(root);
+  }
+}
