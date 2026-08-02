@@ -82,8 +82,8 @@ let resolve (argv: string array) (configuredUrl: string) =
             function
             | Ok _ -> []
             | Error e -> [ e ]
-
         Error(errorOf root @ errorOf baseUrl)
+
 let distDirectory (config: GeneratorConfig) =
     let dist = Path.GetFullPath(Path.Combine(config.ProjectRoot, "dist"))
     let root = Path.GetFullPath config.ProjectRoot

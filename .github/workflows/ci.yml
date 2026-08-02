@@ -126,20 +126,25 @@ jobs:
           echo "deployed to $url"
 
       - name: Smoke-test the deployment
+        env:
+          VERCEL_BYPASS: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: |
           set -euo pipefail
           url="${{ steps.deploy.outputs.url }}"
           fail() { echo "::error::$1"; exit 1; }
 
-          code=$(curl -sS -o /dev/null -w '%{http_code}' "$url/")
+          [ -n "${VERCEL_BYPASS:-}" ] || fail "VERCEL_AUTOMATION_BYPASS_SECRET is not set — enable Protection Bypass for Automation in Vercel and add the secret to the repo"
+          bypass=(-H "x-vercel-protection-bypass: $VERCEL_BYPASS")
+
+          code=$(curl -sS -o /dev/null -w '%{http_code}' "${bypass[@]}" "$url/")
           [ "$code" = "200" ] || fail "home page returned HTTP $code"
 
-          headers=$(curl -sSI "$url/")
+          headers=$(curl -sSI "${bypass[@]}" "$url/")
           for header in content-security-policy strict-transport-security x-content-type-options; do
             grep -iq "^$header:" <<< "$headers" || fail "$header missing — the vercel.json translation dropped it"
           done
 
-          code=$(curl -sS -o /dev/null -w '%{http_code}' "$url/about")
+          code=$(curl -sS -o /dev/null -w '%{http_code}' "${bypass[@]}" "$url/about")
           [ "$code" = "200" ] || fail "/about returned HTTP $code — cleanUrls did not survive"
 
           echo "ok: home and /about serve 200 with security headers intact"
