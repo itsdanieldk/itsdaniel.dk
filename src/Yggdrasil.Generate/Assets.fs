@@ -120,7 +120,13 @@ let private run (exe: string) (args: string list) (workingDir: string) =
         failwithf "%s exited %d\n%s\n%s" (Path.GetFileName exe) p.ExitCode out err
 
 let private ensureTailwind (binDir: string) (asset: string) =
-    let dest = Path.Combine(binDir, $"{asset}-{tailwindVersion}")
+    let name =
+        if isWindows && asset.EndsWith ".exe" then
+            asset.Substring(0, asset.Length - 4) + $"-{tailwindVersion}.exe"
+        else
+            $"{asset}-{tailwindVersion}"
+
+    let dest = Path.Combine(binDir, name)
 
     if not (File.Exists dest) then
         download $"https://github.com/tailwindlabs/tailwindcss/releases/download/v{tailwindVersion}/{asset}" dest
