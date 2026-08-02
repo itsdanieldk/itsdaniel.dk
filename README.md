@@ -116,6 +116,15 @@ One-time setup:
 2. Turn off the Git integration's production deploys, or every push deploys twice (Vercel's ungated
    one fails anyway for lack of `dotnet`).
 3. Set `SITE_URL` in the Vercel environment if it differs from `site.yaml`'s `url`.
+4. Repository secret `VERCEL_AUTOMATION_BYPASS_SECRET` — generate it under **Settings → Deployment
+   Protection → Protection Bypass for Automation** and copy the value into a GitHub Actions secret of
+   the same name.
+
+> **Deployment Protection makes the deploy URL 302.** With it enabled, the unique `*.vercel.app`
+> deploy URL redirects unauthenticated requests to an SSO login, so the smoke test would see `302`
+> instead of `200`. The deploy job sends the `x-vercel-protection-bypass` header
+> (`VERCEL_AUTOMATION_BYPASS_SECRET`) so it can verify the live deployment without turning protection
+> off for humans.
 
 > **Do not hand-write `.vercel/output/config.json`.** `vercel build` translates `cleanUrls`,
 > `trailingSlash` and `headers` from `vercel.json` into Build Output API routes; that format supports
