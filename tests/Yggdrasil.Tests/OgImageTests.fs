@@ -9,7 +9,7 @@ open System.IO
 
 open Expecto
 
-let private fontsDir = Path.Combine(projectRoot, "static", "fonts")
+let private fontsDir = Path.Combine(projectRoot, "assets", "fonts")
 
 let private pngSize (path: string) =
     let bytes = File.ReadAllBytes path

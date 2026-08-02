@@ -41,15 +41,16 @@ let private loadTypeface (path: string) =
     | null ->
         failwith (
             $"could not load font %s{path} — the file is missing, or this platform's Skia build "
-            + "cannot parse it. The OG cards read the same WOFF2 files the site serves."
+            + "cannot parse it. OG cards use TTF, not the WOFF2 the site serves, because the "
+            + "NoDependencies Linux Skia build ships without Brotli and so cannot decode WOFF2."
         )
     | typeface -> typeface
 
 let private loadFonts (fontsDir: string) =
     let load name = loadTypeface (Path.Combine(fontsDir, name))
-    { Wordmark = load "metamorphous-latin-400-normal.woff2"
-      Sans = load "fira-sans-latin-400-normal.woff2"
-      SansBold = load "fira-sans-latin-700-normal.woff2" }
+    { Wordmark = load "metamorphous-latin-400-normal.ttf"
+      Sans = load "fira-sans-latin-400-normal.ttf"
+      SansBold = load "fira-sans-latin-700-normal.ttf" }
 
 let private baselineFor (font: SKFont) (top: float32) =
     top - font.Metrics.Ascent

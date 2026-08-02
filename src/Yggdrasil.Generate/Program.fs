@@ -170,7 +170,7 @@ let main argv =
                 Assets.build binDir assetsDir distDir
 
                 printfn "Generating OG share cards ..."
-                OgImage.generateAll config (Path.Combine(staticRoot, "fonts")) distDir content.Notes content.Projects
+                OgImage.generateAll config (Path.Combine(assetsDir, "fonts")) distDir content.Notes content.Projects
 
             match writeSite config content distDir with
             | Error errors -> reportErrors "Rendering" errors

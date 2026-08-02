@@ -129,6 +129,10 @@ repository second.
 - `assets/css/app.css` carries two edits over a stock Tailwind entry: the `@source` scan of
   `src/Yggdrasil.Web`, and the dark-mode block targeting the `.tm` highlight wrapper.
 - The footer year is frozen at generate time; rebuild to refresh it.
+- **OG share cards render from TTF, not the WOFF2 the site serves.** `SkiaSharp.NativeAssets.Linux.NoDependencies`
+  ships without Brotli, so `SKTypeface.FromFile` cannot decode WOFF2 on Linux. The three faces the
+  cards use live as lossless TTF conversions under `assets/fonts/` — a build input, never copied into
+  `dist/`. macOS Skia would read the WOFF2 directly; TTF keeps the Linux CI generate working too.
 
 ## Licensing
 

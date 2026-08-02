@@ -1,10 +1,9 @@
 Fonts bundled with this site
 ============================
 
-Three families are served from this directory: Fira Sans for text, Fira Code for code blocks, and
-Metamorphous for the wordmark. Two of them — Fira Sans and Metamorphous — are also read at build
-time to draw the Open Graph cards, from lossless TTF copies under `assets/fonts/` (Skia's Linux
-build cannot decode WOFF2); a copy of this licence travels with them there.
+This directory holds lossless TTF copies of two families — Fira Sans and Metamorphous — read at
+build time to draw the Open Graph cards. They are not served; the browser gets the WOFF2 originals
+from `static/fonts/`. TTF is used because Skia's Linux `NoDependencies` build cannot decode WOFF2.
 
 Each is licensed under the SIL Open Font License, Version 1.1, which requires its copyright notice
 to travel with the font software. The notices are reproduced verbatim below, followed by the licence
